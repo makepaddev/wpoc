@@ -9,16 +9,16 @@ var Base = require('./Base');
 class Widget extends Base {
 
     constructor(app) {
-        this.app = app;
         super();
+        this.app = app;
     }
 
     properties() {
         this.__isWidget__ = true;
 
-        this.view = null;
-        this.mustRebuild = true;
-        this.hasRebuilds = true;
+        this._view = null;
+        this._mustRebuild = true;
+        this._hasRebuilds = true;
 
         this.inheritable('dependencies', function () {
             let deps = this.dependencies;
@@ -52,7 +52,7 @@ class Widget extends Base {
 
                 processDep.call(this, key, dep)
             }
-        })
+        });
 
         this.dependencies = {
             'Animation': require('./Animation'),
@@ -62,15 +62,15 @@ class Widget extends Base {
     }
 
     rebuild() {
-        this.mustRebuild = true;
-        let p = this.view.parent;
+        this._mustRebuild = true;
+        let p = this.view._parent;
         while (p) {
-            let widget = p.widget;
+            let widget = p._widget;
             if (widget !== undefined) {
-                if (widget.hasRebuilds) {
+                if (widget._hasRebuilds) {
                     break;
                 } else {
-                    widget.hasRebuilds = true;
+                    widget._hasRebuilds = true;
                 }
             }
             p = p.parent;

@@ -25,7 +25,10 @@ class MainWidget extends require('../src/Widget') {
     build() {
         return {
             type: 'RectView', x: 10, y: 10, w: 50, h: 50, children: [
-                {type: 'ButtonWidget', id: 'button1', borderWidth: 10, title: this.mytitle}
+                {type: 'ButtonWidget', id: 'button', borderWidth: 10, title: this.mytitle},
+                {id: 'btm', children: [
+                    {type: 'ButtonWidget', id: 'button', borderWidth: 20, title: "hello " + this.mytitle}
+                ]}
             ]
         };
     }

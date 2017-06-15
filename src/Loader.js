@@ -64,7 +64,7 @@
             }
 
             var factory = new Function("require", "exports", "module", source + "\n//# sourceURL=" + location.origin + modulePath + "\n");
-            m = {} || module;
+            m = module || {};
             m.exports = {};
 
             var ret = factory.call(m.exports, makeRequire(buildBasePath(modulePath)), m.exports, m);
@@ -87,11 +87,15 @@
         var b = path.charAt(1)
         if(a === '/') return path//path.slice(1)
         if(a === '.'){
-            if(b === '.') throw new Error("IMPLEMENT RELATIVE PATHS")
-            var out = parent.slice(0,parent.lastIndexOf('/')) + path.slice(1)
+            let out;
+            if (b == '.') {
+                out = parent + path;
+            } else {
+                out = parent.slice(0,parent.lastIndexOf('/')) + path.slice(1)
+            }
             return out
         }
-        return '/src/' + path
+        return '/' + path
     }
 
     var pendingLoads = {};

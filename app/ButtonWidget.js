@@ -1,19 +1,13 @@
 /**
  *
  */
-class ButtonWidget extends require('./Widget') {
+class ButtonWidget extends require('../src/Widget') {
 
-    constructor() {
-        super();
+    constructor(app) {
+        super(app);
     }
 
     properties() {
-        this.dependencies = {
-            'BorderWidget': require('./BorderWidget')
-        }
-
-        var i = 1;
-
         this.annotations = {
             'title': {rebuild: true}
         };

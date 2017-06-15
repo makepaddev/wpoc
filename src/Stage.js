@@ -1,6 +1,10 @@
 /**
  *
  */
+
+var View = require('./View');
+var Base = require('./Base');
+
 class Stage extends Base {
 
     constructor() {
