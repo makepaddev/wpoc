@@ -2,29 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <style type="text/css" media="screen">
-    body {
-        overflow: hidden;
-    }
-
-    #editor {
-        margin: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-  </style>
 </head>
-<body>
+<body style="margin:0;background-color:black">
     <script src="./src/Loader.js"></script>
-    <div class="loader" main="./IDE.js" modules="ace:/ace/lib/ace"> </div>
-	    <pre id="editor">function foo(items) {
-	    var i;
-	    for (i = 0; i &lt; items.length; i++) {
-	        alert("Ace Rocks " + items[i]);
-	    }
-	}</pre>
-</body>
+    <div class="loader" main="./IDE.js" style='width:100vw;height:100vh;'modules="ace:/ace/lib/ace"> </div>
+	</body>
 </html>

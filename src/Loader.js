@@ -1,5 +1,8 @@
 (function() {
-
+    Object.defineProperty(window,'_',{
+        get:function(){},
+        set:console.log.bind(console)
+    })
     var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
     var loadedSources = {};
@@ -31,8 +34,8 @@
             var modules = cvs[i].getAttribute('modules');
             if(modules){                
                 var nmods = modules.split(',')
-                for(var i = 0; i < nmods.length; i++){
-                    var lbl = nmods[i].split(':')
+                for(var j = 0; j < nmods.length; j++){
+                    var lbl = nmods[j].split(':')
                     modulePaths[lbl[0]] = lbl[1]
                 }
             }
@@ -43,7 +46,7 @@
                         var require = makeRequire("/", {"canvas": canvas});
                         var main = require(mainAbsPath);
                         if(typeof main === 'function'){
-                            new main()
+                            new main(canvas)
                         }
                     }, 0);
                 });

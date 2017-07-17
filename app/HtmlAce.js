@@ -6,10 +6,13 @@ var ace = require('../ace/lib/ace/ace.js')
 
 class HtmlAce extends require('../src/HtmlWidget') {
 
-    constructor(app) {
-        super();
+    constructor(parent, props) {
+        super(parent, props);
+        // aight. so. whatnow.
+    }
 
-        var editor = ace.edit("editor");
+    onBuilt(){
+        var editor = ace.edit(this.view.domNode);
         editor.setTheme("ace/theme/twilight");
         editor.session.setMode("ace/mode/javascript");
     }
@@ -18,10 +21,15 @@ class HtmlAce extends require('../src/HtmlWidget') {
         this.annotations = {
         };
     }
+    // alrighty so how do we forward those props set on our
+    // widget into our view.. especially the size things
 
     build(){
-        // some HTML representing us?
-     
+        return {
+            width:this.width,
+            height:this.height,
+            type:'HtmlDiv'
+        }
     }
 }
 
