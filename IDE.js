@@ -13,7 +13,8 @@ class IDE extends HtmlApp {
     properties() {
         this.dependencies = {
             'HtmlAce': require('./app/HtmlAce'),
-            'HtmlSplitter': require('./app/HtmlSplitter')
+            'HtmlSplitter': require('./app/HtmlSplitter'),
+            'HtmlTree': require('./app/HtmlTree')
         }
     }
 
@@ -22,7 +23,7 @@ class IDE extends HtmlApp {
         return {
             type:'HtmlSplitter',
             vertical:true, pos:0.25,
-            pane1:{type:'HtmlDiv',backgroundColor:'yellow'},
+            pane1:{type:'HtmlTree',backgroundColor:'yellow'},
             pane2:{type:'HtmlSplitter', 
                 vertical:false, pos:0.8,
                 pane1:{type:'HtmlAce'},

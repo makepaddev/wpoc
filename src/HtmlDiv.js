@@ -10,9 +10,14 @@ class HtmlDiv extends require('./HtmlView') {
         var domNode = document.createElement('div')
         parent.appendChild(domNode)
         var dStyle = domNode.style
+
         dStyle.boxSizing = 'border-box'
+        dStyle.display = props.display || this.display
+        dStyle.verticalAlign = props.verticalAlign || this.verticalAlign
+        dStyle.whiteSpace = props.whiteSpace || this.whiteSpace
         dStyle.width = props.width || this.width 
         dStyle.height = props.height || this.height
+        dStyle.overflow = props.overflow || this.overflow
         dStyle.backgroundColor = props.backgroundColor || this.backgroundColor
         dStyle.cursor = props.cursor || this.cursor
         dStyle.marginTop = props.marginTop || this.marginTop
@@ -34,6 +39,7 @@ class HtmlDiv extends require('./HtmlView') {
     }
 
     properties() {
+        this.whiteSpace = 'nowrap'
         this.float = 'left'
         this.width = '100%'
         this.height = '100%'

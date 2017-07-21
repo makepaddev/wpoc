@@ -62,9 +62,10 @@ class Base {
     static extend(properties) {
         class extended extends this {
         }
+        var proto = extended.prototype
         for (let key in properties) {
             let desc = Object.getOwnPropertyDescriptor(properties, key);
-            Object.defineProperty(extended, key, desc);
+            Object.defineProperty(proto, key, desc);
         }
         return extended;
     }

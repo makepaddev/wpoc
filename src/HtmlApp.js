@@ -92,8 +92,11 @@ class HtmlApp extends HtmlWidget {
             var id = node.id || 0
             // create node
             var type = widget && widget[node.type] || this[node.type]
+            if(!type){
+                console.log('Cant instance type '+node.type)
+                return
+            }
             var main = new type(parent.domNode, node)
-
             // if main is not of type View, recur
             if(main instanceof HtmlWidget){
                 // build us instead
