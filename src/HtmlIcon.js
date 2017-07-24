@@ -20,7 +20,6 @@ class HtmlIcon extends require('./HtmlText') {
         f.load().then(_=>{
             document.fonts.add(f)
         })
-        console.log(f)
         this.fontFamily = 'fontawesome'
         this.fontSize = '1em'
         this.float = 'left'

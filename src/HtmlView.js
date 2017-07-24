@@ -9,6 +9,7 @@ class HtmlView extends require('./Base') {
     }
 
     properties() {
+    	this.__isView__ = true;
     }
 }
 

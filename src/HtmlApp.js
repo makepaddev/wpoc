@@ -9,15 +9,16 @@ class HtmlApp extends HtmlWidget {
 
     constructor(domNode) {
     	super(domNode)
+
     	this.view = new this.HtmlDiv()
     	this.view.domNode = domNode
-
+        this.app = this
         var capture = null
         var mouseNode = window
 
         // support resize events
         var resizes = this.$resizes = []
-
+        this.$rebuilds = []
         function pollResize(){
             for(var i = 0; i < resizes.length; i++){
                 var n = resizes[i]
@@ -30,21 +31,143 @@ class HtmlApp extends HtmlWidget {
             }
         }
 
+        var ta = this.textArea = document.createElement('textarea')
+        ta.className = "wpoc"
+        //ta.style.position = 'relative'
+        //ta.style.top = 0
+        ta.style.height = 100
+        ta.style.width = 100
+        ta.setAttribute('autocomplete','off')
+        ta.setAttribute('autocorrect','off')
+        ta.setAttribute('autocapitalize','off')
+        ta.setAttribute('spellcheck','false')
+
+        var style = document.createElement('style')
+        /*
+        style.innerHTML = "\n\
+        textarea.wpoc{\n\
+            opacity: 0;\n\
+            border-radius:4px;\n\
+            color: white;\n\
+            font-size:6;\n\
+            background: gray;\n\
+            -moz-appearance: none;\n\
+            appearance: none;\n\
+            border: none;\n\
+            resize: none;\n\
+            outline: none;\n\
+            overflow: hidden;\n\
+            text-indent:0px;\n\
+            padding: 0 0px;\n\
+            margin: 0 -1px;\n\
+            text-indent: 0px;\n\
+            -ms-user-select: text;\n\
+            -moz-user-select: text;\n\
+            -webkit-user-select: text;\n\
+            user-select: text;\n\
+            white-space: pre!important;\n\
+            \n\
+        }\n\
+        textarea:focus.wpoc{\n\
+            outline:0px !important;\n\
+            -webkit-appearance:none;\n\
+        }"*/
+        ta.style.position = 'fixed'
+        //ta.style.zIndex = 100
+        //ta.style.left = -100
+        //ta.style.top = -100
+        ta.style.opacity = 1.
+
+
+        ta.addEventListener('cut', _=>{
+
+        })
+        ta.addEventListener('paste', _=>{
+            
+        })
+        ta.addEventListener('select', _=>{
+            
+        })
+        ta.addEventListener('input', _=>{
+            
+        })
+        ta.addEventListener('touchmove', _=>{
+            
+        })
+        ta.addEventListener('blur', _=>{
+            if(this.$focus) this.setFocus(null)
+        })
+        ta.addEventListener('keydown', e=>{
+            if(this.$isEditing){
+                if(e.key === 'Enter'){
+                    console.log('here')
+                    e.preventDefault()
+                    this.$isEditing(ta.value)
+                    this._stopEdit()
+                }
+                else if(e.key === 'Escape'){
+                    e.preventDefault()
+                    this.$isEditing(null)
+                    this._stopEdit()
+                }
+                return
+            }
+            if(this.$focus && this.$focus.onKeyDown) this.$focus.onKeyDown(e)
+        })
+        ta.addEventListener('keyup', e=>{
+            if(this.$focus && this.$focus.onKeyUp) this.$focus.onKeyUp(e)
+        })
+
+        document.head.appendChild(style)
+        document.body.appendChild(ta)
         window.addEventListener('resize', function(){
             pollResize()
         })
 
-        mouseNode.addEventListener('mousedown',function(e){
+        this.$textArea = ta
+
+        var dblClick = 500
+        var clickCount = 0
+        var clickStamp = 0
+        var clickLast = undefined
+
+        mouseNode.addEventListener('mousedown',e=>{
             var n = e.srcElement.$vnode
             capture = n
+            if(n && n.widget){ // set the focus to our hidden text area
+                if(this.$isEditing){
+                    console.log("HERE")
+                    this.$isEditing(ta.value)
+                    this._stopEdit()
+                }
+                // lets set focus to our textarea
+                ta.focus()
+                // check if we are editing, ifso stop editing
+
+                var time = Date.now()
+                if(clickLast !== n.widget){
+                    clickLast = n.widget
+                    clickStamp = time
+                    clickCount = 1
+                }
+                else{
+                    if((time - clickStamp) < dblClick){
+                        clickCount ++
+                    }
+                    else clickCount = 1
+                    clickStamp = time
+                }
+                e.clickCount = clickCount
+            }
 
             if(n && n.widget && n.widget.onMouseDown){                
                 n.widget.onMouseDown(e, n)
                 e.preventDefault()
             }
-             pollResize()
+            pollResize()
         })
-        mouseNode.addEventListener('mouseup',function(e){
+
+        mouseNode.addEventListener('mouseup',e=>{
             var n = capture//e.srcElement.$vnode
             if(n && n.widget && n.widget.onMouseUp){
                 n.widget.onMouseUp(e, n)
@@ -52,7 +175,7 @@ class HtmlApp extends HtmlWidget {
             capture = null
             pollResize()
         })
-        mouseNode.addEventListener('mousemove',function(e){
+        mouseNode.addEventListener('mousemove',e=>{
             // check if we are captured
             if(capture){
                 if(capture.widget && capture.widget.onMouseMove){
@@ -67,14 +190,14 @@ class HtmlApp extends HtmlWidget {
             }
             pollResize()
         })
-        mouseNode.addEventListener('mouseover',function(e){
+        mouseNode.addEventListener('mouseover',e=>{
             var n = e.srcElement.$vnode
             if(n && n.widget && n.widget.onMouseOver){
                 n.widget.onMouseOver(e, n)
             }
             pollResize()
         })
-        mouseNode.addEventListener('mouseout',function(e){
+        mouseNode.addEventListener('mouseout',e=>{
             var n = e.srcElement.$vnode
             if(n && n.widget && n.widget.onMouseOut){
                 n.widget.onMouseOut(e, n)
@@ -82,7 +205,39 @@ class HtmlApp extends HtmlWidget {
             pollResize()
         })
 
-        this.rebuild(this.view)
+        this._rebuild(this.view)
+    }
+
+    _absPos(elem){
+        var x = 0, y = 0
+        while(elem){
+            x += elem.offsetLeft || 0
+            y += elem.offsetTop || 0
+            elem = elem.offsetParent
+        }
+        return [x,y]
+    }
+
+    _stopEdit(){
+        var ta = this.$textArea
+        this.$isEditing = undefined
+        ta.style.left = '-100px'
+        ta.style.top = '-100px'
+        ta.style.width = '0px'
+        ta.style.height = '0px'
+    }
+
+    _editText(x, y, w, h, text, done){
+        var ta = this.$textArea
+        this.$isEditing = done
+        ta.focus()
+        ta.style.left = x+'px'
+        ta.style.top = y+'px'
+        ta.style.width = w+'px'
+        ta.style.height = h+'px'
+        ta.value = text
+        ta.selectionStart = 0
+        ta.selectionEnd = text.length
     }
    
     _buildNode(node, parent, widget){
@@ -97,14 +252,19 @@ class HtmlApp extends HtmlWidget {
                 return
             }
             var main = new type(parent.domNode, node)
+            main.parent = parent
+            main.type = node.type
             // if main is not of type View, recur
-            if(main instanceof HtmlWidget){
+            if(main.__isWidget__){
                 // build us instead
+                main.app = this
                 this._buildNode(main.build(), parent, main)
                 if(main.onBuilt) main.onBuilt()
+                if(!widget.nest) widget.nest = main
             }
             else{
                 main.widget = widget
+                if(!widget.nest) widget.nest = main
                 if(!widget.view){
                     if(widget.onResize){
                        this.$resizes.push(main.domNode)
@@ -120,7 +280,31 @@ class HtmlApp extends HtmlWidget {
         }
     }
 
-    rebuild(parent){
+    _addRebuild(node){
+        var rebuilds = this.$rebuilds
+        if(rebuilds.indexOf(node) !== -1) return
+        rebuilds.push(node)
+        if(this._raf) return
+        this._raf = window.requestAnimationFrame(_=>{
+            this._raf = undefined
+            this.$rebuilds = []
+            for(var i = 0; i < rebuilds.length; i++){
+                // find the relevant html node
+                var node = rebuilds[i]
+                var nest = node
+                while(nest && !nest.__isView__){
+                    nest = nest.nest
+                }
+                // toss it
+                nest.domNode.parentNode.removeChild(nest.domNode)
+                // just rebuild it
+                node.view = node.nest = undefined
+                this._buildNode(node.build(), node.parent, node)
+            }
+        })
+    }
+
+    _rebuild(parent){
     	// lets call build recursively
         this._buildNode(this.build(), parent, this)
         if(this.onBuilt) this.onBuilt()

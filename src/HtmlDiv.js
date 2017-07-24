@@ -7,7 +7,7 @@ class HtmlDiv extends require('./HtmlView') {
     constructor(parent, props) {
         super();
         if(!parent) return
-        var domNode = document.createElement('div')
+        var domNode = document.createElement(this.elementName)
         parent.appendChild(domNode)
         var dStyle = domNode.style
 
@@ -34,11 +34,13 @@ class HtmlDiv extends require('./HtmlView') {
         dStyle.borderStyle = props.borderStyle || this.borderStyle
         dStyle.borderWidth = props.borderWidth || this.borderWidth
         domNode.$vnode = this
+        domNode.tabindex = -1
         this.id = props.id
         this.domNode = domNode
     }
 
     properties() {
+        this.elementName = 'div'
         this.whiteSpace = 'nowrap'
         this.float = 'left'
         this.width = '100%'
