@@ -38,7 +38,7 @@ class IDE extends HtmlApp {
                 pane1:{
                     type:'HtmlTabs',
                     tabs:[
-                        {type:'HtmlAce', title:'File1'},
+                        {type:'HtmlAce', title:'Very long file'},
                         {type:'HtmlAce', title:'File2'},
                         {type:'HtmlAce', title:'File3'}
                     ]

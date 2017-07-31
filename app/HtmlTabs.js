@@ -14,12 +14,13 @@ class HtmlTabs extends require('../src/HtmlWidget') {
             HtmlTab:{
                 paddingLeft:'0.2em',
                 paddingTop:'0.3em',
+                paddingRight:'0.4em',
                 type:'HtmlDiv',
                 overflow:'hidden',
                 borderRadius:'7px 7px 0px 0px',
                 backgroundColor:'#444',
                 marginRight:'0.2em',
-                width:'5em'
+                width:undefined
             },
             HtmlTabBg:{
                 paddingLeft:'0.2em',
