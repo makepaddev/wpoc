@@ -12,9 +12,18 @@ class IDE extends HtmlApp {
 
     properties() {
         this.dependencies = {
-            'HtmlAce': require('./app/HtmlAce'),
-            'HtmlSplitter': require('./app/HtmlSplitter'),
-            'HtmlTree': require('./app/HtmlTree')
+            'HtmlAce': require('./app/HtmlAce').extend({
+
+            }),
+            'HtmlSplitter': require('./app/HtmlSplitter').extend({
+            
+            }),
+            'HtmlTabs': require('./app/HtmlTabs').extend({
+            
+            }),
+            'HtmlTree': require('./app/HtmlTree').extend({
+            
+            })
         }
     }
 
@@ -23,11 +32,18 @@ class IDE extends HtmlApp {
         return {
             type:'HtmlSplitter',
             vertical:true, pos:0.25,
-            pane1:{type:'HtmlTree',backgroundColor:'yellow'},
+            pane1:{type:'HtmlTree'},
             pane2:{type:'HtmlSplitter', 
                 vertical:false, pos:0.8,
-                pane1:{type:'HtmlAce'},
-                pane2:{type:'HtmlDiv',backgroundColor:'purple'},
+                pane1:{
+                    type:'HtmlTabs',
+                    tabs:[
+                        {type:'HtmlAce', title:'File1'},
+                        {type:'HtmlAce', title:'File2'},
+                        {type:'HtmlAce', title:'File3'}
+                    ]
+                },
+                pane2:{type:'HtmlDiv'},
             }
         }
     }

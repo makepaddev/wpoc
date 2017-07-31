@@ -16,6 +16,11 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         this.vertical = true
         this.annotations = {
         };
+        this.dependencies = {
+            HtmlDiv:{
+                color:'red'
+            }
+        }
     }
 
     onMouseDown(e,n){

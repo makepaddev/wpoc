@@ -34,51 +34,19 @@ class HtmlApp extends HtmlWidget {
         var ta = this.textArea = document.createElement('textarea')
         ta.className = "wpoc"
         //ta.style.position = 'relative'
-        //ta.style.top = 0
-        ta.style.height = 100
-        ta.style.width = 100
+        ta.style.top = '-100px'
+        ta.style.left = '-100px'
+        ta.style.height = '0px'
+        ta.style.width = '0px'
         ta.setAttribute('autocomplete','off')
         ta.setAttribute('autocorrect','off')
         ta.setAttribute('autocapitalize','off')
         ta.setAttribute('spellcheck','false')
 
         var style = document.createElement('style')
-        /*
-        style.innerHTML = "\n\
-        textarea.wpoc{\n\
-            opacity: 0;\n\
-            border-radius:4px;\n\
-            color: white;\n\
-            font-size:6;\n\
-            background: gray;\n\
-            -moz-appearance: none;\n\
-            appearance: none;\n\
-            border: none;\n\
-            resize: none;\n\
-            outline: none;\n\
-            overflow: hidden;\n\
-            text-indent:0px;\n\
-            padding: 0 0px;\n\
-            margin: 0 -1px;\n\
-            text-indent: 0px;\n\
-            -ms-user-select: text;\n\
-            -moz-user-select: text;\n\
-            -webkit-user-select: text;\n\
-            user-select: text;\n\
-            white-space: pre!important;\n\
-            \n\
-        }\n\
-        textarea:focus.wpoc{\n\
-            outline:0px !important;\n\
-            -webkit-appearance:none;\n\
-        }"*/
+       
         ta.style.position = 'fixed'
-        //ta.style.zIndex = 100
-        //ta.style.left = -100
-        //ta.style.top = -100
-        ta.style.opacity = 1.
-
-
+       
         ta.addEventListener('cut', _=>{
 
         })
@@ -100,7 +68,6 @@ class HtmlApp extends HtmlWidget {
         ta.addEventListener('keydown', e=>{
             if(this.$isEditing){
                 if(e.key === 'Enter'){
-                    console.log('here')
                     e.preventDefault()
                     this.$isEditing(ta.value)
                     this._stopEdit()
@@ -136,7 +103,6 @@ class HtmlApp extends HtmlWidget {
             capture = n
             if(n && n.widget){ // set the focus to our hidden text area
                 if(this.$isEditing){
-                    console.log("HERE")
                     this.$isEditing(ta.value)
                     this._stopEdit()
                 }

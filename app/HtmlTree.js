@@ -61,11 +61,6 @@ class HtmlTree extends require('../src/HtmlWidget') {
                 verticalAlign:'top',
                 float:'none',
                 fontSize:'0.6em'
-            }),
-            HtmlEdit:require('../src/HtmlEdit').extend({
-                onChange(){
-
-                }
             })
         }
         this.annotations = {

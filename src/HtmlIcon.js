@@ -7,11 +7,8 @@ class HtmlIcon extends require('./HtmlText') {
     constructor(parent, props) {
         super(parent, props, true)
         if(!parent) return
-        // lets get our icon in there
-        // this.domNode.style = 
         var domNode = this.domNode
         domNode.innerHTML = this.table[props.icon || this.icon]
-        //console.log(this.table[this.icon])
     }
 
     properties() {

@@ -17,6 +17,8 @@ function dependencies() {
         else{
             this[key] = dep
         }
+        Object.defineProperty(this[key], '__outer__', {value:this})
+        Object.defineProperty(this[key], '__name__', {value:key})
     }
 
     for (let key in deps) {
