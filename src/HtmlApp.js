@@ -10,7 +10,7 @@ class HtmlApp extends HtmlWidget {
     constructor(domNode) {
     	super(domNode)
 
-    	this.view = new this.HtmlDiv()
+    	this.view = new this.View()
     	this.view.domNode = domNode
         this.app = this
         var capture = null

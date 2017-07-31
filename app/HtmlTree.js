@@ -24,26 +24,28 @@ class HtmlTree extends require('../src/HtmlWidget') {
             ]
         }
         this.dependencies = {
-            HtmlDiv:{
+            TreeContainer:{
+                type:'View',
                 paddingLeft:'0.15em',
                 paddingTop:'0.2em',
                 overflow:'auto'
             },
-            HtmlWrap:require('../src/HtmlDiv').extend({
+            Wrap:{
+                type:'View',
                 float:'none',
                 paddingLeft:'0.2em',
                 height:undefined,
                 width:undefined,
-            }),
-            HtmlSelected:{
-                type:'HtmlWrap',
+            },
+            Selected:{
+                type:'Wrap',
                 backgroundColor:'gray'
             },
-            HtmlFocussed:{
-                type:'HtmlSelected',
+            Focussed:{
+                type:'Selected',
                 backgroundColor:'purple'
             },
-            HtmlIcon:require('../src/HtmlIcon').extend({
+            Icon:{
                 fontSize:'0.8em',
                 cursor:'default',
                 width:'1em', 
@@ -51,8 +53,8 @@ class HtmlTree extends require('../src/HtmlWidget') {
                 marginTop:'0.2em',
                 marginLeft:'0.2em',
                 marginRight:'0.2em'
-            }),
-            HtmlText:require('../src/HtmlText').extend({
+            },
+            Text:{
                 color:'#ccc',
                 overflow:'none',
                 cursor:'default',
@@ -61,7 +63,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
                 verticalAlign:'top',
                 float:'none',
                 fontSize:'0.6em'
-            })
+            }
         }
         this.annotations = {
         };
@@ -107,7 +109,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
         this.setFocus()
         this.cursorPos = n.id
 
-        if(n.type === 'HtmlText'){
+        if(n.type === 'Text'){
             if(e.clickCount === 2){
                 // lets set up a text edit with the right size
                 var textNode = n.domNode
@@ -159,17 +161,16 @@ class HtmlTree extends require('../src/HtmlWidget') {
 
     buildTree(node, out, nodes, depth){
         var id = out.length
-        var sel = id ===  this.cursorPos?this.hasFocus()?'HtmlFocussed':'HtmlSelected':'HtmlWrap'
-        var text = id == this.editPos?'HtmlEdit':'HtmlText'
-
+        var sel = id ===  this.cursorPos?this.hasFocus()?'Focussed':'Selected':'Wrap'
+      
         nodes.push(node)
         if(node.children){
             var children = node.children
             var open = node.open
             out.push(
                 {type:sel,id:id,children:[
-                    {type:'HtmlIcon',id:id,marginLeft:depth+'em', icon:open?'folder-open':'folder'},
-                    {type:text,id:id,text:node.name}
+                    {type:'Icon',id:id,marginLeft:depth+'em', icon:open?'folder-open':'folder'},
+                    {type:'Text',id:id,text:node.name}
                 ]}
             )
             if(open){
@@ -181,8 +182,8 @@ class HtmlTree extends require('../src/HtmlWidget') {
         else{
             out.push(
                 {type:sel,id:id,children:[
-                    {type:'HtmlIcon',id:id,marginLeft:depth+'em', icon:'file'},
-                    {type:text,id:id,text:node.name},
+                    {type:'Icon',id:id,marginLeft:depth+'em', icon:'file'},
+                    {type:'Text',id:id,text:node.name},
                 ]}
             )
         }
@@ -195,7 +196,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
         return {
             width:this.width,
             height:this.height,
-            type:'HtmlDiv',
+            type:'TreeContainer',
             children:out
          }
     }

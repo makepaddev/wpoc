@@ -28,7 +28,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
         return {
             width:this.width,
             height:this.height,
-            type:'HtmlDiv'
+            type:'View'
         }
     }
 }

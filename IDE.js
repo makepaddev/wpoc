@@ -12,16 +12,16 @@ class IDE extends HtmlApp {
 
     properties() {
         this.dependencies = {
-            'HtmlAce': require('./app/HtmlAce').extend({
+            'Ace': require('./app/HtmlAce').extend({
 
             }),
-            'HtmlSplitter': require('./app/HtmlSplitter').extend({
+            'Splitter': require('./app/HtmlSplitter').extend({
             
             }),
-            'HtmlTabs': require('./app/HtmlTabs').extend({
+            'Tabs': require('./app/HtmlTabs').extend({
             
             }),
-            'HtmlTree': require('./app/HtmlTree').extend({
+            'Tree': require('./app/HtmlTree').extend({
             
             })
         }
@@ -30,20 +30,20 @@ class IDE extends HtmlApp {
     // prototyping build for Html UI
     build(){
         return {
-            type:'HtmlSplitter',
+            type:'Splitter',
             vertical:true, pos:0.25,
-            pane1:{type:'HtmlTree'},
-            pane2:{type:'HtmlSplitter', 
+            pane1:{type:'Tree'},
+            pane2:{type:'Splitter', 
                 vertical:false, pos:0.8,
                 pane1:{
-                    type:'HtmlTabs',
+                    type:'Tabs',
                     tabs:[
-                        {type:'HtmlAce', title:'Very long file'},
-                        {type:'HtmlAce', title:'File2'},
-                        {type:'HtmlAce', title:'File3'}
+                        {type:'Ace', title:'Very long file'},
+                        {type:'Ace', title:'File2'},
+                        {type:'Ace', title:'File3'}
                     ]
                 },
-                pane2:{type:'HtmlDiv'},
+                pane2:{type:'View'},
             }
         }
     }

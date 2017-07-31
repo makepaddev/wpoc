@@ -2,7 +2,7 @@
  * Defines a coherent part of the app.
  */
 
-class HtmlText extends require('./HtmlDiv') {
+class HtmlText extends require('./HtmlView') {
 
     constructor(parent, props, noText) {
         super(parent, props)

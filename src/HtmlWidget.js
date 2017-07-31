@@ -17,7 +17,9 @@ class HtmlWidget extends require('./Base') {
     properties() {
     	this.inheritable('dependencies', require('./dependencies'));
     	this.dependencies = {
-    		HtmlDiv:require('./HtmlDiv')
+    		View:require('./HtmlView'),
+            Icon:require('./HtmlIcon'),
+            Text:require('./HtmlText')
     	}
         this.__isWidget__ = true;
     }

@@ -17,8 +17,12 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         this.annotations = {
         };
         this.dependencies = {
-            HtmlDiv:{
+            SplitContainer:{
+                type:'View',
                 color:'red'
+            },
+            SplitBar:{
+                type:'View'
             }
         }
     }
@@ -86,11 +90,11 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         return {
             width:this.width,
             height:this.height,
-            type:'HtmlDiv',
+            type:'SplitContainer',
             children:[
-                {type:'HtmlDiv',children:[this.pane1]},
-                {type:'HtmlDiv',id:'split',cursor:this.vertical?'ew-resize':'ns-resize', backgroundColor:'gray'},
-                {type:'HtmlDiv',children:[this.pane2]}
+                {type:'SplitContainer',children:[this.pane1]},
+                {type:'SplitBar',id:'split',cursor:this.vertical?'ew-resize':'ns-resize', backgroundColor:'gray'},
+                {type:'SplitContainer',children:[this.pane2]}
             ]
         }
     }
