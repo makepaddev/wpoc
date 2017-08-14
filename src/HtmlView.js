@@ -6,12 +6,20 @@ var CssCache = new WeakSet()
 var CssSheet
 var CssId = 1
 
+function cssIfy(key, value){
+    var cssKey = key.replace(/[A-Z]/g,function(m){
+        return '-'+m.toLowerCase()
+    })
+    if(value === undefined) return ''
+    if(typeof value === 'number') value = value+'px'
+    return cssKey + ': ' + value + ';\n'
+}
+
 class HtmlView extends require('./Base') {
 
     constructor(parent, props) {
         super();
         if(!parent) return
-
         // lets compute a CSS cache.
         var proto = Object.getPrototypeOf(this)
         if(!CssCache.has(proto)){
@@ -28,13 +36,7 @@ class HtmlView extends require('./Base') {
             // lets make a new css class based on our props
             var rule = '.'+proto.$cssClass+'{\n'
             for(var key in this._css){
-                var css = key.replace(/[A-Z]/g,function(m){
-                    return '-'+m.toLowerCase()
-                })
-                var value = this[key]
-                if(value === undefined) continue
-                if(typeof value === 'number') value = value+'px'
-                rule += css + ': ' + value + ';\n'
+                rule += cssIfy(key, this[key])
             }
             rule += '\n}'
 
@@ -42,14 +44,34 @@ class HtmlView extends require('./Base') {
                 CssSheet = document.createElement("style")
                 document.head.appendChild(CssSheet);
             }
+
             // lets add a rule
             CssSheet.sheet.insertRule(rule)
+
+            // lets compute state classes
+            if(this._states){
+                for(var stateName in this._states){
+                    var state = this._states[stateName]
+                    // lets build a statecss
+                    var rule = '.'+proto.$cssClass + '_' + stateName+'{\n'
+                    for(var key in this._css){
+                        if(key in state){
+                            rule += cssIfy(key, state[key])
+                        }
+                        else rule += cssIfy(key, this[key])
+                    }
+                    rule += '\n}'
+                    CssSheet.sheet.insertRule(rule)
+                }
+            }
+
             CssCache.add(proto)
         }   
 
         var domNode = document.createElement(this.elementName)
         parent.appendChild(domNode)
         var dStyle = domNode.style
+        this.$currentClass = this.$cssClass
         domNode.classList.add(this.$cssClass)
         // lets do the style props as immediate inline styles
         for(var key in props){
@@ -65,8 +87,49 @@ class HtmlView extends require('./Base') {
         this.domNode = domNode
     }
 
+    findChildByType(type){
+        var cn = this.domNode.childNodes
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            if(childView.type === type || 
+                childView.widget && childView.widget.type === type){
+                return childView
+            }
+        }
+    }
+
+    findChildren(){
+        var cn = this.domNode.childNodes
+        var ret = []
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            ret.push(childView)
+        }
+        return ret
+    }
+
+    // sets a node to a state
+    setState(state){
+        this.state = state
+        if(!this._states) return
+        if(this._states[state]){
+            var newClass = this.$cssClass + '_' + state
+            this.domNode.classList.remove(this.$currentClass)
+            this.domNode.classList.add(newClass)
+            this.$currentClass = newClass
+        }
+        else { // switch to 'default' state
+            this.domNode.classList.remove(this.$currentClass)
+            this.domNode.classList.add(this.$cssClass)
+            this.$currentClass = this.$cssClass
+        }
+    }
+
     properties() {
     	this.__isView__ = true
+        this.state = ''
         this.inheritable('css', function(){
             this._css = Object.create(this._css || null)
             for(var key in this.css){
@@ -75,6 +138,14 @@ class HtmlView extends require('./Base') {
                 this[key] = this.css[key]
             }
         });
+        
+        this.inheritable('states', function(){
+            // flip states to targetted view classes
+            this._states = Object.create(this._states || null)
+            for(var key in this.states){
+                this._states[key] = this.states[key]
+            }
+        })
 
         this.css = {
             boxSizing:'border-box',

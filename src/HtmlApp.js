@@ -218,8 +218,9 @@ class HtmlApp extends HtmlWidget {
                 return
             }
             var main = new type(parent.domNode, node)
-            main.parent = parent
+            main.parentView = parent
             main.type = node.type
+            main.parentWidget = widget
             // if main is not of type View, recur
             if(main.__isWidget__){
                 // build us instead
@@ -265,7 +266,7 @@ class HtmlApp extends HtmlWidget {
                 nest.domNode.parentNode.removeChild(nest.domNode)
                 // just rebuild it
                 node.view = node.nest = undefined
-                this._buildNode(node.build(), node.parent, node)
+                this._buildNode(node.build(), node.parentView, node)
             }
         })
     }

@@ -21,7 +21,79 @@ class HtmlWidget extends require('./Base') {
             Icon:require('./HtmlIcon'),
             Text:require('./HtmlText')
     	}
+
+        this.inheritable('states', function(){
+            // flip states to targetted view classes
+            this._states = Object.create(this._states || null)
+            var outputDeps = {}
+            for(var stateName in this.states){
+                var inputDeps = this.states[stateName]
+                this._states[stateName] = inputDeps
+                // invert the subs
+                for(var inputName in inputDeps){
+                    var inputDep = inputDeps[inputName]
+                    var outputDep = outputDeps[inputName]
+                    if(!outputDep) outputDep = outputDeps[inputName] = {}
+                    var outputState = outputDep[stateName]
+                    if(!outputState) outputState = outputDep[stateName] = {}
+                    for(var prop in inputDep){
+                        outputState[prop] = inputDep[prop]
+                    }
+                }
+            }
+            for(var depClass in outputDeps){
+                this[depClass] = this[depClass].extend({
+                    states:outputDeps[depClass]
+                })
+            }
+        })
         this.__isWidget__ = true;
+        this.state = ''
+    }
+
+    _setState(state, htmlView){
+        htmlView.setState(state)
+        // get children and recur
+        var cn = htmlView.domNode.childNodes
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            if(childView.widget === this){
+                this._setState(state, childView)
+            }
+        }
+    }
+
+    // set all HTML View elements belonging to this node to a certain state
+    setState(state){
+        this.state = state
+        this._setState(state, this.view)
+        // recursive walk over connected html views
+        // that share our Widget class
+
+    }
+
+    findChildByType(type){
+        var cn = this.view.domNode.childNodes
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            if(childView.type === type || 
+                childView.widget && childView.widget.type === type){
+                return childView
+            }
+        }
+    }
+
+    findChildren(){
+        var cn = this.view.domNode.childNodes
+        var ret = []
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            ret.push(childView)
+        }
+        return ret
     }
 
     rebuild() {

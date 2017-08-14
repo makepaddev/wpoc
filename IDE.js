@@ -13,16 +13,16 @@ class IDE extends HtmlApp {
     properties() {
         this.dependencies = {
             'Ace': require('./app/HtmlAce').extend({
-
+                
             }),
             'Splitter': require('./app/HtmlSplitter').extend({
-            
+                
             }),
             'Tabs': require('./app/HtmlTabs').extend({
-            
+                
             }),
             'Tree': require('./app/HtmlTree').extend({
-            
+                
             })
         }
     }
