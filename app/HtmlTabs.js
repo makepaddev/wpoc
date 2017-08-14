@@ -120,7 +120,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
 
     // how do i find all childtabs?
     setActiveTab(index){
-        var children = this.findChildByType('TabBg').findChildren()
+        var children = this.childViewByType('TabBg').childViews()
         for(var i = 0; i < children.length; i++){
             var tab = children[i].widget
             if(i === index){

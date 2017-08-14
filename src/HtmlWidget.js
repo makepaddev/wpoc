@@ -68,32 +68,18 @@ class HtmlWidget extends require('./Base') {
     setState(state){
         this.state = state
         this._setState(state, this.view)
-        // recursive walk over connected html views
-        // that share our Widget class
-
     }
 
-    findChildByType(type){
-        var cn = this.view.domNode.childNodes
-        for(var i = 0; i < cn.length; i++){
-            var childView = cn[i].$vnode
-            if(!childView) continue
-            if(childView.type === type || 
-                childView.widget && childView.widget.type === type){
-                return childView
-            }
-        }
+    childWidgetByType(type){
+        return this.view.childWidgetByType(type)
     }
 
-    findChildren(){
-        var cn = this.view.domNode.childNodes
-        var ret = []
-        for(var i = 0; i < cn.length; i++){
-            var childView = cn[i].$vnode
-            if(!childView) continue
-            ret.push(childView)
-        }
-        return ret
+    childViewByType(type){
+        return this.view.childViewByType(type)
+    }
+
+    childViews(){
+        return this.view.childViews()
     }
 
     rebuild() {

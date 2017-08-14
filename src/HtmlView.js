@@ -87,19 +87,29 @@ class HtmlView extends require('./Base') {
         this.domNode = domNode
     }
 
-    findChildByType(type){
+    childWidgetByType(type){
         var cn = this.domNode.childNodes
         for(var i = 0; i < cn.length; i++){
             var childView = cn[i].$vnode
-            if(!childView) continue
-            if(childView.type === type || 
-                childView.widget && childView.widget.type === type){
+            if(!childView || !childView.widget) continue
+            if(childView.widget.type === type){
                 return childView
             }
         }
     }
 
-    findChildren(){
+    childViewByType(type){
+        var cn = this.domNode.childNodes
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView) continue
+            if(childView.type === type){
+                return childView
+            }
+        }
+    }
+
+    childViews(){
         var cn = this.domNode.childNodes
         var ret = []
         for(var i = 0; i < cn.length; i++){
