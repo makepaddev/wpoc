@@ -19,7 +19,8 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         this.dependencies = {
             SplitContainer:{
                 type:'View',
-                color:'red'
+                //overflow:'hidden',
+                color:'orange'
             },
             SplitBar:{
                 type:'View'

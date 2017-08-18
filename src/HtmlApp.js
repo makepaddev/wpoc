@@ -172,6 +172,39 @@ class HtmlApp extends HtmlWidget {
         })
 
         this._rebuild(this.view)
+        this._animate = this._animate.bind(this)
+    }
+
+    _animate(time){
+        this._reqanim = false
+        for(var i = 0; i < this._animations.length ;i++){
+            var anim = this._animations[i]
+            if(!anim.start){
+                anim.start = time
+            }
+            var t = 0
+            if(time - anim.start >= anim.time){
+                t = 1.
+                this._animations.splice(i, 1)
+                i--
+            }
+            else t = (time - anim.start) / anim.time
+            anim.cb(t)
+            if(t == 1.){
+                anim.resolve()
+            }
+        }
+        if(this._animations.length) this._reqanim = window.requestAnimationFrame(this._animate)
+    }
+
+    animate(time, cb){
+        if(!this._animations) this._animations = []
+        var resolve, prom = new Promise(function(s,j){resolve = s})
+        this._animations.push({time:time, cb:cb, resolve:resolve})
+        if(!this._reqanim){
+            this._reqanim = window.requestAnimationFrame(this._animate)
+        }
+        return prom
     }
 
     _absPos(elem){

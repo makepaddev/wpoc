@@ -165,12 +165,15 @@ class HtmlView extends require('./Base') {
             whiteSpace:'nowrap',
             left:undefined,
             top:undefined,
+            flex:undefined,
+            flexFlow:undefined,
             width:'100%',
             height:'100%',
             float:'left',
             overflow:undefined,
             textOverflow:undefined,
             cursor:undefined,
+            position:undefined,
             marginTop:0,
             marginRight:0,
             marginBottom:0,
@@ -182,7 +185,8 @@ class HtmlView extends require('./Base') {
             borderRadius:undefined,
             borderColor:undefined,
             borderStyle:'none',
-            borderWidth:0
+            borderWidth:0,
+            zIndex:undefined
         }
 
         this.elementName = 'div'
