@@ -11,7 +11,7 @@ function cssIfy(key, value){
         return '-'+m.toLowerCase()
     })
     if(value === undefined) return ''
-    if(typeof value === 'number') value = value+'px'
+    if(key !== 'zIndex' && typeof value === 'number') value = value+'px'
     return cssKey + ': ' + value + ';\n'
 }
 
@@ -93,7 +93,7 @@ class HtmlView extends require('./Base') {
             var childView = cn[i].$vnode
             if(!childView || !childView.widget) continue
             if(childView.widget.type === type){
-                return childView
+                return childView.widget
             }
         }
     }
@@ -186,6 +186,7 @@ class HtmlView extends require('./Base') {
             borderColor:undefined,
             borderStyle:'none',
             borderWidth:0,
+            outline:undefined,
             zIndex:undefined
         }
 

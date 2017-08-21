@@ -245,9 +245,14 @@ class HtmlApp extends HtmlWidget {
             // its a plain object
             var id = node.id || 0
             // create node
-            var type = widget && widget[node.type] || this[node.type]
+            var type, walk = widget
+            while(!type && walk){
+                type = walk[node.type] 
+                walk = walk.parentWidget
+            }
+            if(!type) type = this[node.type]
             if(!type){
-                console.log('Cant instance type '+node.type)
+                console.log('Cant instance type '+node.type, widget)
                 return
             }
             var main = new type(parent.domNode, node)

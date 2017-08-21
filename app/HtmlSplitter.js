@@ -19,11 +19,11 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         this.dependencies = {
             SplitContainer:{
                 type:'View',
-                //overflow:'hidden',
-                color:'orange'
             },
             SplitBar:{
-                type:'View'
+                type:'View',
+                backgroundColor:'gray',
+                borderWidth:'1px'
             }
         }
     }
@@ -94,7 +94,7 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
             type:'SplitContainer',
             children:[
                 {type:'SplitContainer',children:[this.pane1]},
-                {type:'SplitBar',id:'split',cursor:this.vertical?'ew-resize':'ns-resize', backgroundColor:'gray'},
+                {type:'SplitBar',id:'split',cursor:this.vertical?'ew-resize':'ns-resize'},
                 {type:'SplitContainer',children:[this.pane2]}
             ]
         }

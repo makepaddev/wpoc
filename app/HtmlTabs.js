@@ -21,6 +21,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     Bg:{
                         position:'relative',
                         left:0,
+                        height:'1.8em',
                         type:'View',
                         paddingLeft:'0.2em',
                         paddingTop:'0.3em',
@@ -58,10 +59,24 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                 onMouseMove:function(e){
                     var pos =  e.pageX - this.startX
                     var ydelta = e.pageY - this.startY
-                    if(Math.abs(ydelta) > 50){
-                        console.log("TEAR IT")
-                    }
                     var node = this.view.domNode
+
+                    if(!this.torn && Math.abs(ydelta) > 50){
+                        node.parentNode.removeChild(node)
+                        // now lets insert the child position absolulte into document
+                        document.body.appendChild(node)
+                        node.style.position = 'absolute'
+                        node.style.zIndex = 100000
+                        node.style.float = 'none'
+                        if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this)
+                        this.torn = true
+                    }
+                    if(this.torn){
+                        node.style.left = parseInt(e.pageX - 0.5*node.offsetWidth)+'px'
+                        node.style.top = parseInt(e.pageY - 0.5*node.offsetHeight)+'px'
+                        if(this.parentWidget.onTabTearMove) this.parentWidget.onTabTearMove(e, this)
+                        return
+                    }
                     node.style.left = pos + 'px'
                     // lets check if we are < the previous
                     var prev = node.previousSibling
@@ -84,7 +99,14 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         node.$vnode.widget.index = newIndex
                     }
                 },
-                onMouseUp:function(){
+                onMouseUp:function(e){
+                    if(this.torn){
+                        // drop it on something.
+                        var node = this.view.domNode
+                        node.parentNode.removeChild(node)
+                        if(this.parentWidget.onTabTearDrop) this.parentWidget.onTabTearDrop(e, this)
+                    }
+
                     // simple animation system
                     var start = parseInt(this.view.domNode.style.left)
                     this.app.animate(100, t=>{
@@ -144,7 +166,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
             },
             TabPage:{
                 float:'none',
-                backgroundColor:'orange',
                 type:'View',
                 width:'100%',
                 height:'100%'
@@ -162,6 +183,10 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     onKeyUp(e, n){
     }
     
+    onTabTornMove(e, tab){
+
+    }
+
     onMouseOver(e,n){
         // setState on the thing we are over
         //this.setState()
