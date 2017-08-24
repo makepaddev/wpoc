@@ -81,7 +81,11 @@ class HtmlWidget extends require('./Base') {
     childViews(){
         return this.view.childViews()
     }
-
+    
+    childWidgets(){
+        return this.view.childWidgets()
+    }
+    
     rebuild() {
         // lets flag us as need rebuild,
         // however the parent shouldnt need to rebuild.

@@ -27,7 +27,11 @@ class IDE extends HtmlApp {
             data:{ // the data the dock manipulates
                 type:'Splitter',
                 vertical:true, pos:0.25,
-                pane1:{type:'Tree'},
+                pane1:{type:'Tabs',
+                    tabs:[
+                        {type:'Tree',title:'Project'}
+                    ]
+                },
                 pane2:{type:'Splitter', 
                     vertical:false, pos:0.8,
                     pane1:{
@@ -38,7 +42,12 @@ class IDE extends HtmlApp {
                             {type:'Ace', title:'File3'}
                         ]
                     },
-                    pane2:{type:'View', backgroundColor:'red'},
+                    pane2:{
+                        type:'Tabs',
+                        tabs:[
+                            {type:'Ace',title:'Log output'}
+                        ]
+                    },
                 }
             }
         }

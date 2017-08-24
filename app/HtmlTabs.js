@@ -33,13 +33,13 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         width:undefined
                     },
                     Icon:{
-                        fontSize:'0.8em',
+                        fontSize:'0.7em',
                         cursor:'default',
                         marginTop:'0.1em',
                         marginLeft:'0.3em',
                     },
                     Text:{
-                        fontSize:'0.8em',
+                        fontSize:'0.7em',
                         cursor:'default',
                         fontWeight:'100',
                         marginTop:'0.08em',
@@ -207,6 +207,17 @@ class HtmlTabs extends require('../src/HtmlWidget') {
         }
     }
 
+    getTabs(){
+        var ct = this.view.childViewByType('TabContainer')
+        var views = ct.childViews()
+        var tabs = []
+        for(var i = 0; i < views.length;i ++){
+            var cw = views[i].childWidgets()
+            if(cw && cw[0]) tabs.push(cw[0])
+        }
+        return tabs
+    }
+
     // deal with tabfocussing
     onMouseDown(e,n){
         this.setFocus()
@@ -228,7 +239,8 @@ class HtmlTabs extends require('../src/HtmlWidget') {
         for(var i = 0; i < this.tabs.length; i++){
             panes.push({
                 type:'TabPage',
-                children:i === this.activeTab?[this.tabs[i]]:null
+                display:i === this.activeTab?'block':'none',
+                children:[this.tabs[i]]
             })
         }
         return {

@@ -20,12 +20,27 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
             SplitContainer:{
                 type:'View',
             },
+            SplitWrapper:{
+                type:'View'
+            },
             SplitBar:{
                 type:'View',
-                backgroundColor:'gray',
+                backgroundColor:'#555',
                 borderWidth:'1px'
             }
         }
+    }
+    
+    getSplitted(){
+        var views = this.view.childViews()
+        var out = [
+            views[0].childWidgets()[0],
+            views[2].childWidgets()[0]
+        ]
+        // filter out dummy views
+        if(out[0] === this) out[0] = undefined
+        if(out[1] === this) out[1] = undefined
+        return out
     }
 
     onMouseDown(e,n){
@@ -93,9 +108,9 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
             height:this.height,
             type:'SplitContainer',
             children:[
-                {type:'SplitContainer',children:[this.pane1]},
+                {type:'SplitWrapper',children:[this.pane1]},
                 {type:'SplitBar',id:'split',cursor:this.vertical?'ew-resize':'ns-resize'},
-                {type:'SplitContainer',children:[this.pane2]}
+                {type:'SplitWrapper',children:[this.pane2]}
             ]
         }
     }

@@ -108,6 +108,18 @@ class HtmlView extends require('./Base') {
             }
         }
     }
+    
+    childWidgets(){
+        var cn = this.domNode.childNodes
+        var widget = this.widget
+        var ret = []
+        for(var i = 0; i < cn.length; i++){
+            var childView = cn[i].$vnode
+            if(!childView || !childView.widget) continue
+            if(childView.widget !== widget) ret.push(childView.widget)
+        }
+        return ret
+    }
 
     childViews(){
         var cn = this.domNode.childNodes
