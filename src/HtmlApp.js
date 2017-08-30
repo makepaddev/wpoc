@@ -30,6 +30,7 @@ class HtmlApp extends HtmlWidget {
                 n.lastHeight = n.offsetHeight
             }
         }
+        this.pollResize = pollResize
 
         var ta = this.textArea = document.createElement('textarea')
         ta.className = "wpoc"
@@ -305,6 +306,7 @@ class HtmlApp extends HtmlWidget {
                 // just rebuild it
                 node.view = node.nest = undefined
                 this._buildNode(node.build(), node.parentView, node)
+                this.pollResize()
             }
         })
     }

@@ -39,7 +39,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
 
     // if someone yanks off a tab, we need to deal with the mouseovers
     onTabTear(e, n){
-        var dv = this.dropView = new this.DropVis(document.body,{})
+        var dv = this.dropView = new this.DropVis(document.body, {})
+        this.dropWidget = n.contentWidget
         this.onTabTearMove(e, n)
     }
 
@@ -59,7 +60,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
         var x = e.pageX, y = e.pageY
 
         for(var i = 0; i < tabs.length; i++){
-            var tab = tabs[i]
+            var path = tabs[i].path
+            var tab = tabs[i].tab
             var node = tab.view.domNode
             var pos = abs(node)
             var tx = pos[0], ty = pos[1], tw = node.offsetWidth, th = node.offsetHeight
@@ -71,6 +73,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 var top = (y - ty)/th
                 var bottom = 1-(y-ty)/th 
                 var min = Math.min(left, right, top, bottom)
+                this.dropPath = path
                 this.dropZone = i
                 this.dropPart = -1
                 if(min === left){
@@ -119,6 +122,84 @@ class HtmlDock extends require('../src/HtmlWidget') {
         // edit the data
         var node =  this.dropView.domNode
         node.parentNode.removeChild(node)
+  
+        var data = this.serialize()
+        var steps = this.dropPath.split('/')
+        var node = data
+        for(var i = 0; i < steps.length; i++){
+            if(steps[i] === '1'){
+                node = node.pane1
+            }
+            else node = node.pane2
+        }
+        if(node.type === 'Tabs'){
+            var newTab = {
+                type:this.dropWidget.type,
+                title:this.dropWidget.title
+            }
+            if(this.dropPart == 0){ // add to tabs
+                node.tabs.push(newTab)
+            }
+            else if(this.dropPart === 1){ // split left
+                node.type = 'Splitter'
+                node.vertical = true
+                node.pos = 0.5
+                node.pane1 = {
+                    type:'Tabs',
+                    tabs:[newTab]
+                }
+                node.pane2 = {
+                    type:'Tabs',
+                    tabs:node.tabs
+                }
+                node.tabs = undefined
+            }
+            else if(this.dropPart === 2){ // split right
+                node.type = 'Splitter'
+                node.vertical = true
+                node.pos = 0.5
+                node.pane1 = {
+                    type:'Tabs',
+                    tabs:node.tabs
+                }                
+                node.pane2 = {
+                    type:'Tabs',
+                    tabs:[newTab]
+                }
+                node.tabs = undefined
+            }
+            else if(this.dropPart === 3){ // split top
+                node.type = 'Splitter'
+                node.vertical = false
+                node.pos = 0.5
+                node.pane1 = {
+                    type:'Tabs',
+                    tabs:[newTab]
+                }
+                node.pane2 = {
+                    type:'Tabs',
+                    tabs:node.tabs
+                }
+                node.tabs = undefined
+            }
+            else if(this.dropPart === 4){ // split bottom
+                node.type = 'Splitter'
+                node.vertical = false
+                node.pos = 0.5
+                node.pane1 = {
+                    type:'Tabs',
+                    tabs:node.tabs
+                }                
+                node.pane2 = {
+                    type:'Tabs',
+                    tabs:[newTab]
+                }
+                node.tabs = undefined
+            }
+
+        }
+        this.data =  data
+        this.rebuild()
     }
 
     onBuilt(){
@@ -128,22 +209,23 @@ class HtmlDock extends require('../src/HtmlWidget') {
     // serialize the state of the entire dock from DOM
     serialize(tabsOut){
         // lets serialize our data
-        function serialize(node){
+        function serialize(node, path){
             if(!node) return null
             // we only recur on splitters
             if(node.type === 'Splitter'){
+                if(path) path = path+'/'
                 // lets grab the things 'in' the SplitWrapper
                 var data = node.getSplitted()
                 return {
                     type:'Splitter',
                     pos:node.pos,
                     vertical:node.vertical,
-                    pane1:serialize(data[0]),
-                    pane2:serialize(data[1])
+                    pane1:serialize(data[0], path+'1'),
+                    pane2:serialize(data[1], path+'2') 
                 }
             }
             else if(node.type === 'Tabs'){ // tabs
-                if(tabsOut) tabsOut.push(node)
+                if(tabsOut) tabsOut.push({tab:node, path:path})
                 var tabs = node.getTabs()
                 var out = []
                 for(var i = 0; i < tabs.length; i++){
@@ -162,7 +244,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 }
             }
         }
-        return serialize(this.childWidgets()[0])
+        return serialize(this.childWidgets()[0], '')
     }
 
     // build deserializes

@@ -62,6 +62,9 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     var node = this.view.domNode
 
                     if(!this.torn && Math.abs(ydelta) > 50){
+                        var fill = node.parentNode.parentNode.children[1].children[this.index]
+                        this.contentWidget = fill.children[0].$vnode.parentWidget
+                        fill.parentNode.removeChild(fill)
                         node.parentNode.removeChild(node)
                         // now lets insert the child position absolulte into document
                         document.body.appendChild(node)
@@ -69,6 +72,9 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         node.style.zIndex = 100000
                         node.style.float = 'none'
                         if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this)
+                        // lets remove our tab contents
+                       
+
                         this.torn = true
                     }
                     if(this.torn){
