@@ -24,8 +24,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
             'Splitter': require('./HtmlSplitter').extend({
             }),
             'Tabs': require('./HtmlTabs').extend({
-                onTabTear(e, n){
-                    this.app.childWidgetByType('Dock').onTabTear(e,n)
+                onTabTear(e, n, empty){
+                    this.app.childWidgetByType('Dock').onTabTear(e, n, empty)
                 },
                 onTabTearMove(e, n){
                    this.app.childWidgetByType('Dock').onTabTearMove(e,n)
@@ -38,10 +38,16 @@ class HtmlDock extends require('../src/HtmlWidget') {
     }
 
     // if someone yanks off a tab, we need to deal with the mouseovers
-    onTabTear(e, n){
+    onTabTear(e, n, empty){
         var dv = this.dropView = new this.DropVis(document.body, {})
+        // what if we tear off the last tab in a splitter,
+        // then we need to rebuild.
         this.dropWidget = n.contentWidget
         this.onTabTearMove(e, n)
+        if(empty){ // lets rebuild to allow a splitter to fold
+            this.data = this.serialize()
+            this.rebuild()
+        }
     }
 
     onTabTearMove(e, n){
@@ -58,7 +64,6 @@ class HtmlDock extends require('../src/HtmlWidget') {
         }
         var style = this.dropView.domNode.style
         var x = e.pageX, y = e.pageY
-
         for(var i = 0; i < tabs.length; i++){
             var path = tabs[i].path
             var tab = tabs[i].tab
@@ -216,13 +221,22 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 if(path) path = path+'/'
                 // lets grab the things 'in' the SplitWrapper
                 var data = node.getSplitted()
-                return {
+                var split = {
                     type:'Splitter',
                     pos:node.pos,
                     vertical:node.vertical,
                     pane1:serialize(data[0], path+'1'),
                     pane2:serialize(data[1], path+'2') 
                 }
+                // so what do we do when a tab in a splitter is empty?
+                if(split.pane1.type === 'Tabs' && split.pane1.tabs.length === 0){
+                    // we have to remove ourselves 
+                    return split.pane2
+                }
+                else if(split.pane2.type === 'Tabs' && split.pane2.tabs.length === 0){
+                    return split.pane1
+                }
+                return split
             }
             else if(node.type === 'Tabs'){ // tabs
                 if(tabsOut) tabsOut.push({tab:node, path:path})

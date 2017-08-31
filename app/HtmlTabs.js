@@ -55,61 +55,78 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     this.parentWidget.setActiveTab(this.index)
                     this.startX = e.pageX
                     this.startY = e.pageY
+
                 },
                 onMouseMove:function(e){
                     var pos =  e.pageX - this.startX
                     var ydelta = e.pageY - this.startY
-                    var node = this.view.domNode
+                    var tabNode = this.view.domNode
 
-                    if(!this.torn && Math.abs(ydelta) > 50){
-                        var fill = node.parentNode.parentNode.children[1].children[this.index]
-                        this.contentWidget = fill.children[0].$vnode.parentWidget
-                        fill.parentNode.removeChild(fill)
-                        node.parentNode.removeChild(node)
-                        // now lets insert the child position absolulte into document
-                        document.body.appendChild(node)
-                        node.style.position = 'absolute'
-                        node.style.zIndex = 100000
-                        node.style.float = 'none'
-                        if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this)
-                        // lets remove our tab contents
-                       
+                    var contentFrame = tabNode.parentNode.parentNode.children[1]
+                    var contentNode = contentFrame.children[this.index]
+                    // how do we get the position in the tab-area?
+                    
+                    var absNode = this.app._absPos(tabNode)
+                    var absFrame = this.app._absPos(tabNode.parentNode)
+                    var dx = absNode[0] - absFrame[0]
+                    if(!this.torn && 
+                        (Math.abs(ydelta) > 50 || 
+                            dx < -0.5 * tabNode.offsetWidth || 
+                            dx > tabNode.parentNode.offsetWidth -0.5*tabNode.offsetWidth)){
+                        
+                        
+                        // fetch the main content 
+                        this.contentWidget = contentNode.children[0].$vnode.parentWidget
 
+                        contentNode.parentNode.removeChild(contentNode)
+                        var empty = tabNode.parentNode.parentNode.children[1].children.length == 0
+                        tabNode.parentNode.removeChild(tabNode)
+                        
+                        document.body.appendChild(tabNode)
+                        tabNode.style.position = 'absolute'
+                        tabNode.style.zIndex = 100000
+                        tabNode.style.float = 'none'
+                        if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this, empty)
+                        
                         this.torn = true
                     }
                     if(this.torn){
-                        node.style.left = parseInt(e.pageX - 0.5*node.offsetWidth)+'px'
-                        node.style.top = parseInt(e.pageY - 0.5*node.offsetHeight)+'px'
+                        tabNode.style.left = parseInt(e.pageX - 0.5*tabNode.offsetWidth)+'px'
+                        tabNode.style.top = parseInt(e.pageY - 0.5*tabNode.offsetHeight)+'px'
                         if(this.parentWidget.onTabTearMove) this.parentWidget.onTabTearMove(e, this)
                         return
                     }
-                    node.style.left = pos + 'px'
+                    tabNode.style.left = pos + 'px'
                     // lets check if we are < the previous
-                    var prev = node.previousSibling
-                    var next = node.nextSibling
-                    var slide, oldPos = node.offsetLeft
-                    if(prev && node.offsetLeft < prev.offsetLeft + prev.offsetWidth * 0.5){
-                        node.parentNode.insertBefore(node, prev)
-                        slide = prev
+                    var tabPrev = tabNode.previousSibling
+                    var tabNext = tabNode.nextSibling
+                    var contentPrev = contentNode.previousSibling
+                    var contentNext = contentNode.nextSibling
+                    var slide, oldPos = tabNode.offsetLeft
+                    if(tabPrev && tabNode.offsetLeft < tabPrev.offsetLeft + tabPrev.offsetWidth * 0.5){
+                        tabNode.parentNode.insertBefore(tabNode, tabPrev)
+                        contentNode.parentNode.insertBefore(contentNode, contentPrev)
+                        slide = tabPrev
                     }
-                    else if(next && node.offsetLeft + node.offsetWidth > next.offsetLeft + next.offsetWidth * 0.5){
-                        node.parentNode.insertBefore(node, next.nextSibling)
-                        slide = next
+                    else if(tabNext && tabNode.offsetLeft + tabNode.offsetWidth > tabNext.offsetLeft + tabNext.offsetWidth * 0.5){
+                        tabNode.parentNode.insertBefore(tabNode, tabNext.nextSibling)
+                        contentNode.parentNode.insertBefore(contentNode, contentNext.nextSibling)
+                        slide = tabNext
                     }
                     if(slide){
-                        var newPos = node.offsetLeft
+                        var newPos = tabNode.offsetLeft
                         this.startX -= (oldPos- newPos)
-                        node.style.left = e.pageX-this.startX + 'px'
+                        tabNode.style.left = e.pageX-this.startX + 'px'
                         var newIndex = slide.$vnode.widget.index
-                        slide.$vnode.widget.index = node.$vnode.widget.index 
-                        node.$vnode.widget.index = newIndex
+                        slide.$vnode.widget.index = tabNode.$vnode.widget.index 
+                        tabNode.$vnode.widget.index = newIndex
                     }
                 },
                 onMouseUp:function(e){
                     if(this.torn){
                         // drop it on something.
-                        var node = this.view.domNode
-                        node.parentNode.removeChild(node)
+                        var tabNode = this.view.domNode
+                        tabNode.parentNode.removeChild(tabNode)
                         if(this.parentWidget.onTabTearDrop) this.parentWidget.onTabTearDrop(e, this)
                     }
 
@@ -202,13 +219,17 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     setActiveTab(index){
         this.activeTab = index
         var children = this.childViewByType('TabBg').childViews()
+        var contents = this.childViewByType('TabContainer').childViews()
+
         for(var i = 0; i < children.length; i++){
             var tab = children[i].widget
             if(i === index){
                 tab.setState('selectedOver')
+                contents[i].domNode.style.display = 'block'
             }
             else{
-               tab.setState('')
+                tab.setState('')
+                contents[i].domNode.style.display = 'none'
             }
         }
     }
@@ -235,6 +256,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
         for(var i = 0; i < this.tabs.length; i++){
             tabs.push({
                 type:'Tab',
+                state:i === this.activeTab?'selected':'none',
                 icon:'file',
                 index:i,
                 text:this.tabs[i].title

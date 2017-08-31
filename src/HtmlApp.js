@@ -267,6 +267,7 @@ class HtmlApp extends HtmlWidget {
                 this._buildNode(main.build(), parent, main)
                 if(main.onBuilt) main.onBuilt()
                 if(!widget.nest) widget.nest = main
+                if(node && node.state) main.setState(node.state)
             }
             else{
                 main.widget = widget
