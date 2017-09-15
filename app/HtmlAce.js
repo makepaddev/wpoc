@@ -9,14 +9,22 @@ class HtmlAce extends require('../src/HtmlWidget') {
     constructor(parent, props) {
         super(parent, props);
         // aight. so. whatnow.
-        // 
+        // lets load our file
+        if(this.file){
+            console.log("HERE", this.file)
+            require(['text!'+this.file], result=>{
+                this.editor.setValue(result)
+                this.editor.selection.setRange({start:{row:0,col:0},end:{row:0,col:0}})
+                console.log(this.editor.selection)
+            })
+        }
     }
 
     onBuilt(){
-        var editor = ace.edit(this.view.domNode);
+        var editor = this.editor = ace.edit(this.view.domNode);
         editor.setTheme("ace/theme/twilight");
         editor.session.setMode("ace/mode/javascript");
-        editor.setValue(this.code || '')
+       
     }
 
     properties() {

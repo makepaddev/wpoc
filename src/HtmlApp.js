@@ -173,7 +173,9 @@ class HtmlApp extends HtmlWidget {
             pollResize()
         })
 
-        this._rebuild(this.view)
+        window.setTimeout(_=>{
+            this._rebuild(this.view)
+        },0)
         this._animate = this._animate.bind(this)
     }
 

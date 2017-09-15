@@ -130,7 +130,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
         else{        
             var node = this.nodes[n.id]
             if(!node) return
-            if(node.children){
+            if(node.folder){
                 node.open = !node.open
             }
         }
@@ -164,8 +164,8 @@ class HtmlTree extends require('../src/HtmlWidget') {
         var sel = id ===  this.cursorPos?this.hasFocus()?'Focussed':'Selected':'Wrap'
       
         nodes.push(node)
-        if(node.children){
-            var children = node.children
+        if(node.folder){
+            var children = node.folder
             var open = node.open
             out.push(
                 {type:sel,id:id,children:[
@@ -192,6 +192,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
     build(){
         var out =  []
         this.nodes = []
+        console.log(this.data)
         this.buildTree(this.data, out, this.nodes, 0)
         return {
             width:this.width,

@@ -269,9 +269,9 @@ class HtmlDock extends require('../src/HtmlWidget') {
             width:this.width,
             height:this.height,
             type:'DockContainer',
-            children:[
+            children:this.data?[
                 this.data
-            ]
+            ]:null
         }
     }
 }

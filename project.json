@@ -1,0 +1,36 @@
+{
+    "type":"Splitter",
+    "vertical":true, "pos":0.25,
+    "pane1":{"type":"Tabs",
+        "tabs":[
+            {"type":"Tree", "data":{
+				"name":"/",
+				"open":true,
+				"folder":[
+					{"name":"IDE.js"},
+					{"name":"devserver.js"},
+					{"name":"devwebsocket.js"},
+					{"name":"app", "folder":[
+						{"name":"HtmlAce.js"},
+						{"name":"HtmlDock.js"}
+					]}
+				]
+			}, "title":"Project", "uid":"filetree"}
+        ]
+    },
+    "pane2":{"type":"Splitter", 
+        "vertical":false, "pos":0.8,
+        "pane1":{
+            "type":"Tabs",
+            "tabs":[
+                {"type":"Ace", "uid":"Edit/IDE.js", "file":"/IDE.js", "title":"IDE.js"}
+           ]
+        },
+        "pane2":{
+            "type":"Tabs",
+            "tabs":[
+                {"type":"Ace", "uid":"log" ,"title":"Log output"}
+            ]
+        }
+    }
+}

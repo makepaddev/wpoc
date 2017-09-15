@@ -90,7 +90,8 @@
             if(Array.isArray(path) && asynccb){
                 var arr = []
                 for(var i = 0; i < path.length; i++){
-                    arr.push(loadJS(buildPath(path[i], basePath)))
+                    var items = buildPath(path[i], basePath).split('!')
+                    arr.push(loadJS(items[items.length-1]))
                 }
                 Promise.all(arr).then(function(){
                     setTimeout(function() { // For debugging.
@@ -206,7 +207,7 @@
             var code = source.replace(/\/\*[\S\s]*?\*\//g,'').replace(/\/\/[^\n]*/g,'')
 
             var deps = [];
-            code.replace(/require\s*\(\s*['"](.*?)['"]/g, function(m, path){
+            code.replace(/require\s*\(\s*['"](.*?)['"]\s*\)/g, function(m, path){
                 // if we have a ! we have a requirejs plugin
                 var items = path.split('!')
                 deps.push(loadJS(buildPath(items[items.length-1], basePath)));
