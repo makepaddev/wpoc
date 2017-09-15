@@ -77,7 +77,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         
                         // fetch the main content 
                         this.contentWidget = contentNode.children[0].$vnode.parentWidget
-
                         contentNode.parentNode.removeChild(contentNode)
                         var empty = tabNode.parentNode.parentNode.children[1].children.length == 0
                         tabNode.parentNode.removeChild(tabNode)

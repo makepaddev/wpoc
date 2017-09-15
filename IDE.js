@@ -29,7 +29,7 @@ class IDE extends HtmlApp {
                 vertical:true, pos:0.25,
                 pane1:{type:'Tabs',
                     tabs:[
-                        {type:'Tree',title:'Project'}
+                        {type:'Tree', title:'Project', uid:'filetree'}
                     ]
                 },
                 pane2:{type:'Splitter', 
@@ -37,15 +37,15 @@ class IDE extends HtmlApp {
                     pane1:{
                         type:'Tabs',
                         tabs:[
-                            {type:'Ace', title:'Very long file'},
-                            {type:'Ace', title:'File2'},
-                            {type:'Ace', title:'File3'}
+                            {type:'Ace', uid:'file1', title:'Very long file', code:'Long file data'},
+                            {type:'Ace', uid:'file2', title:'File2', code:'File 2 data'},
+                            {type:'Ace', uid:'file3', title:'File3', code:'File3 data'}
                         ]
                     },
                     pane2:{
                         type:'Tabs',
                         tabs:[
-                            {type:'Ace',title:'Log output'}
+                            {type:'Ace', uid:'log' ,title:'Log output'}
                         ]
                     },
                 }

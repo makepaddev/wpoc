@@ -13,6 +13,7 @@ class HtmlApp extends HtmlWidget {
     	this.view = new this.View()
     	this.view.domNode = domNode
         this.app = this
+        this.uids = {}
         var capture = null
         var mouseNode = window
 
@@ -256,18 +257,33 @@ class HtmlApp extends HtmlWidget {
                 console.log('Cant instance type '+node.type, widget)
                 return
             }
-            var main = new type(parent.domNode, node)
+            // see if we can reuse a uid'ed node.
+            var main
+            if(node.uid !== undefined){
+                main = this.uids[node.uid]
+                if(!main) main = this.uids[node.uid] = new type(parent.domNode, node)
+                else main.__reused__ = true
+            }
+            else main = new type(parent.domNode, node)
+            // ok how do we reuse it
+
             main.parentView = parent
             main.type = node.type
             main.parentWidget = widget
             // if main is not of type View, recur
             if(main.__isWidget__){
-                // build us instead
-                main.app = this
-                this._buildNode(main.build(), parent, main)
-                if(main.onBuilt) main.onBuilt()
-                if(!widget.nest) widget.nest = main
-                if(node && node.state) main.setState(node.state)
+                if(main.__reused__){ // just have to move the old domnode
+                    // move main.view into the new parent
+                    parent.domNode.appendChild(main.view.domNode)
+                }
+                else{
+                    // build us instead
+                    main.app = this
+                    this._buildNode(main.build(), parent, main)
+                    if(main.onBuilt) main.onBuilt()
+                    if(!widget.nest) widget.nest = main
+                    if(node && node.state) main.setState(node.state)
+                }
             }
             else{
                 main.widget = widget

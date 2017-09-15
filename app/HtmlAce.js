@@ -16,6 +16,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
         var editor = ace.edit(this.view.domNode);
         editor.setTheme("ace/theme/twilight");
         editor.session.setMode("ace/mode/javascript");
+        editor.setValue(this.code || '')
     }
 
     properties() {

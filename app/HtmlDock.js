@@ -140,6 +140,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
         if(node.type === 'Tabs'){
             var newTab = {
                 type:this.dropWidget.type,
+                uid:this.dropWidget.uid,
                 title:this.dropWidget.title
             }
             if(this.dropPart == 0){ // add to tabs
@@ -254,6 +255,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
             else{ // its something else
                 return {
                     type:node.type,
+                    uid:node.uid,
                     title:node.title
                 }
             }
