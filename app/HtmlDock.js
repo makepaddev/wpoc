@@ -212,6 +212,26 @@ class HtmlDock extends require('../src/HtmlWidget') {
         this.serialize()
     }
 
+    addTab(group, newTemplate){
+        var data = this.serialize()
+        function walk(node){
+            if(node.type === 'Splitter'){
+                walk(node.pane1)
+                walk(node.pane2)
+            }
+            else if(node.type === 'Tabs'){
+                if(node.group === group){
+                    // lets set the selectedIndex
+                    node.activeTab = 
+                        node.tabs.push(newTemplate) - 1
+                }
+            }
+        }
+        walk(data)
+        this.data = data
+        this.rebuild()
+    }
+
     // serialize the state of the entire dock from DOM
     serialize(tabsOut){
         // lets serialize our data
@@ -248,6 +268,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 }
                 return {
                     type:'Tabs',
+                    group:node.group,
                     activeTab:node.activeTab,
                     tabs:out
                 }

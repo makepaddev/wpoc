@@ -8,8 +8,6 @@ class HtmlAce extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
         super(parent, props);
-        // aight. so. whatnow.
-        // lets load our file
         if(this.file){
             require(['text!'+this.file], result=>{
                 this.editor.setValue(result)
@@ -29,8 +27,6 @@ class HtmlAce extends require('../src/HtmlWidget') {
         this.annotations = {
         };
     }
-    // alrighty so how do we forward those props set on our
-    // widget into our view.. especially the size things
 
     build(){
         return {

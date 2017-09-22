@@ -91,7 +91,10 @@
                 var arr = []
                 for(var i = 0; i < path.length; i++){
                     var items = buildPath(path[i], basePath).split('!')
-                    arr.push(loadJS(items[items.length-1]))
+                    if(items.length>1){
+                        arr.push(loadFileContents(items[items.length-1]))
+                    }
+                    else arr.push(loadJS(items[items.length-1]))
                 }
                 Promise.all(arr).then(function(){
                     setTimeout(function() { // For debugging.

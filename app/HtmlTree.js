@@ -82,13 +82,13 @@ class HtmlTree extends require('../src/HtmlWidget') {
         }
         else if(e.key === 'ArrowLeft'){
              var node = this.nodes[this.cursorPos]
-            if(!node || !node.children) return
+            if(!node || !node.folder) return
             node.open = false
             this.rebuild()
         }
         else if(e.key === 'ArrowRight'){
              var node = this.nodes[this.cursorPos]
-            if(!node || !node.children) return
+            if(!node || !node.folder) return
             node.open = true
             this.rebuild()
         }
@@ -105,10 +105,34 @@ class HtmlTree extends require('../src/HtmlWidget') {
         // find the node at current cursor pos
     }
 
+    findPath(data, node, path){
+        if(data === node){
+            path.unshift(data)
+            return true
+        }
+        var folder = data.folder
+        if(folder){
+            for(var i = 0; i < folder.length; i++){
+                var file = folder[i]
+                if(this.findPath(file, node, path)){
+                    path.unshift(data)
+                    return true
+                }
+            }
+        }
+    }
+
     onMouseDown(e,n){
         this.setFocus()
         this.cursorPos = n.id
 
+        // lets open the file somewhere.
+        
+        var node = this.nodes[n.id]
+        // lets build a path from this node
+        var path = []
+        this.findPath(this.data, node, path)
+        if(e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
         if(n.type === 'Text'){
             if(e.clickCount === 2){
                 // lets set up a text edit with the right size
@@ -128,7 +152,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
             }
         }
         else{        
-            var node = this.nodes[n.id]
+           
             if(!node) return
             if(node.folder){
                 node.open = !node.open
@@ -192,7 +216,6 @@ class HtmlTree extends require('../src/HtmlWidget') {
     build(){
         var out =  []
         this.nodes = []
-        console.log(this.data)
         this.buildTree(this.data, out, this.nodes, 0)
         return {
             width:this.width,

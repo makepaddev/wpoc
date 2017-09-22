@@ -6,7 +6,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
         super(parent, props);
-        this.activeTab = 0
+        if(this.activeTab === undefined) this.activeTab = 0
     }
 
     properties() {
