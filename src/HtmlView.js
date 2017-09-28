@@ -87,6 +87,23 @@ class HtmlView extends require('./Base') {
         this.domNode = domNode
     }
 
+    parentWidgetByType(type){
+        var node = this.domNode
+        while(node){
+            var widget = node.$vnode && node.$vnode.widget
+            if(widget.type === type) return widget
+            node = node.parentNode
+        }
+    }
+    
+     parentViewByType(type){
+        var node = this.domNode
+        while(node){
+            if(node.$vnode && node.$vnode.type === type) return node.$vnode
+            node = node.parentNode
+        }
+    }
+
     childWidgetByType(type){
         var cn = this.domNode.childNodes
         for(var i = 0; i < cn.length; i++){
@@ -199,7 +216,8 @@ class HtmlView extends require('./Base') {
             borderStyle:'none',
             borderWidth:0,
             outline:undefined,
-            zIndex:undefined
+            zIndex:undefined,
+            pointerEvents:undefined
         }
 
         this.elementName = 'div'

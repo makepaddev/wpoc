@@ -43,14 +43,14 @@ class HtmlTree extends require('../src/HtmlWidget') {
             },
             Focussed:{
                 type:'Selected',
-                backgroundColor:'purple'
+                backgroundColor:'#a7a'
             },
             Icon:{
-                fontSize:'0.8em',
+                fontSize:'0.95em',
                 cursor:'default',
                 width:'1em', 
-                color:'#ccc',
-                marginTop:'0.2em',
+                color:'#bbb',
+                marginTop:'0.1em',
                 marginLeft:'0.2em',
                 marginRight:'0.2em'
             },
@@ -59,10 +59,10 @@ class HtmlTree extends require('../src/HtmlWidget') {
                 overflow:'none',
                 cursor:'default',
                 display:'inline-block',
-                marginTop:'0.5em',
+                marginTop:'0.2em',
                 verticalAlign:'top',
                 float:'none',
-                fontSize:'0.6em'
+                fontSize:'0.7em'
             }
         }
         this.annotations = {
@@ -132,7 +132,7 @@ class HtmlTree extends require('../src/HtmlWidget') {
         // lets build a path from this node
         var path = []
         this.findPath(this.data, node, path)
-        if(e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
+        if(!node.folder && e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
         if(n.type === 'Text'){
             if(e.clickCount === 2){
                 // lets set up a text edit with the right size

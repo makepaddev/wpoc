@@ -144,7 +144,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 title:this.dropWidget.title
             }
             if(this.dropPart == 0){ // add to tabs
-                node.tabs.push(newTab)
+                node.activeTab = node.tabs.push(newTab) - 1
             }
             else if(this.dropPart === 1){ // split left
                 node.type = 'Splitter'
@@ -156,7 +156,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 }
                 node.pane2 = {
                     type:'Tabs',
-                    tabs:node.tabs
+                    tabs:node.tabs,
+                    group:node.group
                 }
                 node.tabs = undefined
             }
@@ -166,7 +167,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pos = 0.5
                 node.pane1 = {
                     type:'Tabs',
-                    tabs:node.tabs
+                    tabs:node.tabs,
+                    group:node.group
                 }                
                 node.pane2 = {
                     type:'Tabs',
@@ -184,7 +186,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 }
                 node.pane2 = {
                     type:'Tabs',
-                    tabs:node.tabs
+                    group:node.group,
+                    tabs:node.tabs,
                 }
                 node.tabs = undefined
             }
@@ -194,7 +197,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pos = 0.5
                 node.pane1 = {
                     type:'Tabs',
-                    tabs:node.tabs
+                    tabs:node.tabs,
+                    group:node.group
                 }                
                 node.pane2 = {
                     type:'Tabs',
@@ -210,6 +214,23 @@ class HtmlDock extends require('../src/HtmlWidget') {
 
     onBuilt(){
         this.serialize()
+    }
+
+    hasUid(uid){
+        var data = this.serialize()
+        function walk(node){
+            if(node.type === 'Splitter'){
+                if(walk(node.pane1))return true
+                if(walk(node.pane2)) return true
+            }
+            else if(node.type === 'Tabs'){
+                if(!node.tabs) return false
+                for(var i = 0; i < node.tabs.length; i++){
+                    if(node.tabs[i].uid === uid) return true
+                }
+            }
+        }
+        return walk(data)
     }
 
     addTab(group, newTemplate){

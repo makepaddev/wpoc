@@ -20,19 +20,24 @@ class HtmlAce extends require('../src/HtmlWidget') {
         var editor = this.editor = ace.edit(this.view.domNode);
         editor.setTheme("ace/theme/twilight");
         editor.session.setMode("ace/mode/javascript");
-       
+        editor.$blockScrolling = Infinity
     }
 
     properties() {
         this.annotations = {
         };
+        this.dependencies = {
+            CloseButton:require('./HtmlButton').extend({
+
+            })
+        }
     }
 
     build(){
         return {
             width:this.width,
             height:this.height,
-            type:'View'
+            type:'View',
         }
     }
 }

@@ -33,12 +33,14 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         width:undefined
                     },
                     Icon:{
+                        color:'#aaa',
                         fontSize:'0.7em',
                         cursor:'default',
                         marginTop:'0.1em',
                         marginLeft:'0.3em',
                     },
                     Text:{
+                        color:'#aaa',
                         fontSize:'0.7em',
                         cursor:'default',
                         fontWeight:'100',
@@ -50,6 +52,43 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         //width:'100%'
                     }
                 },
+                states:{
+                    selected:{
+                        Bg:{
+                            zIndex:"10000",
+                            backgroundColor:'#777'
+                        },
+                        Icon:{
+                            color:'#fff'
+                        },
+                        Text:{
+                            color:'#fff'
+                        }
+                    },
+                    selectedOver:{
+                        Bg:{
+                            zIndex:"10000",
+                            backgroundColor:'#aaa'
+                        },
+                        Icon:{
+                            color:'#fff'
+                        },
+                        Text:{
+                            color:'#fff'
+                        }
+                    },
+                    over:{
+                        Bg:{
+                            backgroundColor:'#999'
+                        },
+                        Icon:{
+                            color:'#fff'
+                        },
+                        Text:{
+                            color:'#fff'
+                        }
+                    }
+                },
                 onMouseDown:function(e){
                     // select this tab
                     this.parentWidget.setActiveTab(this.index)
@@ -57,9 +96,18 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     this.startY = e.pageY
 
                 },
+                closeTab(){
+                    var tabNode = this.view.domNode
+                    var contentFrame = tabNode.parentNode.parentNode.children[1]
+                    var contentNode = contentFrame.children[this.index]
+                    tabNode.parentNode.removeChild(tabNode)
+                    contentNode.parentNode.removeChild(contentNode)
+
+                },
                 onMouseMove:function(e){
                     var pos =  e.pageX - this.startX
                     var ydelta = e.pageY - this.startY
+
                     var tabNode = this.view.domNode
 
                     var contentFrame = tabNode.parentNode.parentNode.children[1]
@@ -145,25 +193,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                 onMouseOut:function(){
                     this.setState(this.isSelected()?'selected':'')
                 },
-                states:{
-                    selected:{
-                        Bg:{
-                            zIndex:"10000",
-                            backgroundColor:'#777'
-                        }
-                    },
-                    selectedOver:{
-                        Bg:{
-                            zIndex:"10000",
-                            backgroundColor:'#aaa'
-                        }
-                    },
-                    over:{
-                        Bg:{
-                            backgroundColor:'#999'
-                        }
-                    }
-                },
+                
                 build(){
                     return {
                         type:'Bg',
@@ -212,6 +242,21 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     onMouseOver(e,n){
         // setState on the thing we are over
         //this.setState()
+    }
+
+    closeTabByContent(content){
+        var domNode = content.view.domNode
+        var content = domNode.parentNode
+
+        var index = 0
+        var child = content
+        while( (child = child.previousSibling) != null ) index++
+        // remove tab
+        var tabs = content.parentNode.parentNode.children[0]
+        tabs.removeChild(tabs.children[index])
+        // remove content
+        content.parentNode.removeChild(content)
+        this.setActiveTab(Math.max(0,index - 1))
     }
 
     // how do i find all childtabs?

@@ -70,6 +70,14 @@ class HtmlWidget extends require('./Base') {
         this._setState(state, this.view)
     }
 
+    parentWidgetByType(type){
+        return this.view.parentWidgetByType(type)
+    }
+
+    parentViewByType(type){
+        return this.view.parentWidgetByType(type)
+    }
+
     childWidgetByType(type){
         return this.view.childWidgetByType(type)
     }

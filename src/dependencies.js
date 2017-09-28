@@ -10,8 +10,9 @@ function dependencies() {
                 this[key] = this[dep.type].extend(dep);
             }
             else{
-                if(!this[key]) throw new Error('Subclass has no baseclass: ' + key);
-                this[key] = this[key].extend(dep);
+                var base = Object.getPrototypeOf(this)[key]
+                if(!base) throw new Error('Subclass has no baseclass: ' + key);
+                this[key] = base.extend(dep);
             }
         }
         else{

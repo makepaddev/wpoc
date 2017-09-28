@@ -18,10 +18,11 @@ class IDE extends HtmlApp {
 
     onOpenFile(file){
         var dock = this.childWidgetByType('Dock')
-        
+        // lets see if we already have this uid
+        if(dock.hasUid('Edit'+file)) return
         dock.addTab(
             "editors",
-            {type:'Ace', uid:'Ace'+file, file:file, title:file.slice(file.lastIndexOf('/')+1)}
+            {type:'Editor', uid:'Edit'+file, file:file, title:file.slice(file.lastIndexOf('/')+1)}
         )
         //console.log("OPEN FILE", file)
     }
@@ -30,7 +31,16 @@ class IDE extends HtmlApp {
         this.dependencies = {
             'Dock': require('./app/HtmlDock').extend({
             }),
-            'Ace': require('./app/HtmlAce').extend({
+            'Editor': require('./app/HtmlEditor').extend({
+                CloseButton:{
+                    onClick(){ 
+                        var tabs = this.parentWidgetByType('Tabs')
+                        tabs.closeTabByContent(this.parentWidgetByType('Editor'))
+                    },
+                }
+            }),
+            'Log': require('./app/HtmlLog').extend({
+                
             }),
             'Tree': require('./app/HtmlTree').extend({
                 onSelect(node, path){

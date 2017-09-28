@@ -12,7 +12,7 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
         this.min = 0.1
         this.max = 0.9
         this.pos = 0.5
-        this.split = 4
+        this.split = 3
         this.vertical = true
         this.annotations = {
         };
@@ -25,7 +25,7 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
             },
             SplitBar:{
                 type:'View',
-                backgroundColor:'#555',
+                backgroundColor:'#333',
                 borderWidth:'1px'
             }
         }
@@ -50,12 +50,14 @@ class HtmlSplitter extends require('../src/HtmlWidget') {
     onMouseMove(e, n){
         if(n.id !== 'split') return
         var node = this.view.domNode
-        var vx = e.pageX - node.offsetLeft
+        var vx = e.pageX - node.offsetLeft 
         var vy = e.pageY - node.offsetTop
         if(this.vertical){
+            vx += 0.5*this.split
             this.pos = vx/node.offsetWidth
         }
         else{
+            vy += 0.5*this.split
             this.pos = vy/node.offsetHeight
         }
 

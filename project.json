@@ -23,14 +23,16 @@
         "pane1":{
             "type":"Tabs",
             "group":"editors",
+            "activeTab":1,
             "tabs":[
-                {"type":"Ace", "uid":"Edit/IDE.js", "file":"/IDE.js", "title":"IDE.js"}
+                {"type":"Log", "uid":"Editors" ,"title":"Editors"},
+                {"type":"Editor", "uid":"Edit/IDE.js", "file":"/IDE.js", "title":"IDE.js"}
            ]
         },
         "pane2":{
             "type":"Tabs",
             "tabs":[
-                {"type":"Ace", "uid":"log" ,"title":"Log output"}
+                {"type":"Log", "uid":"log" ,"title":"Log output"}
             ]
         }
     }
