@@ -1,5 +1,5 @@
 /**
- *
+ * Tabs widget with slideable/draggable tabs
  */
 
 class HtmlTabs extends require('../src/HtmlWidget') {
@@ -12,9 +12,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     properties() {
         this.dependencies = {
             Container:{
-                type:'View',
-                //display:'flex',
-                //flexFlow:'column nowrap'
+                type:'View'
             },
             Tab:require('../src/HtmlWidget').extend({
                 dependencies:{
@@ -49,7 +47,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         overflow:'hidden',
                         textOverflow:'ellipsis',
                         whiteSpace:'nowrap'
-                        //width:'100%'
                     }
                 },
                 states:{
@@ -90,7 +87,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     }
                 },
                 onMouseDown:function(e){
-                    // select this tab
                     this.parentWidget.setActiveTab(this.index)
                     this.startX = e.pageX
                     this.startY = e.pageY
@@ -112,7 +108,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
 
                     var contentFrame = tabNode.parentNode.parentNode.children[1]
                     var contentNode = contentFrame.children[this.index]
-                    // how do we get the position in the tab-area?
                     
                     var absNode = this.app._absPos(tabNode)
                     var absFrame = this.app._absPos(tabNode.parentNode)
@@ -122,7 +117,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                             dx < -0.5 * tabNode.offsetWidth || 
                             dx > tabNode.parentNode.offsetWidth -0.5*tabNode.offsetWidth)){
                         
-                        // fetch the main content 
                         this.contentWidget = contentNode.children[0].$vnode.parentWidget
                         contentNode.parentNode.removeChild(contentNode)
                         var empty = tabNode.parentNode.parentNode.children[1].children.length == 0
@@ -135,7 +129,7 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this, empty)
 
                         this.parentWidget.setActiveTab(Math.max(0, this.index-1))
-                        // select previous tab
+
                         this.torn = true
                     }
                     if(this.torn){
@@ -145,17 +139,19 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         return
                     }
                     tabNode.style.left = pos + 'px'
-                    // lets check if we are < the previous
+                    
                     var tabPrev = tabNode.previousSibling
                     var tabNext = tabNode.nextSibling
                     var contentPrev = contentNode.previousSibling
                     var contentNext = contentNode.nextSibling
                     var slide, oldPos = tabNode.offsetLeft
+                    // lets check if we are < the previous
                     if(tabPrev && tabNode.offsetLeft < tabPrev.offsetLeft + tabPrev.offsetWidth * 0.5){
                         tabNode.parentNode.insertBefore(tabNode, tabPrev)
                         contentNode.parentNode.insertBefore(contentNode, contentPrev)
                         slide = tabPrev
                     }
+                    // or > the next one
                     else if(tabNext && tabNode.offsetLeft + tabNode.offsetWidth > tabNext.offsetLeft + tabNext.offsetWidth * 0.5){
                         tabNode.parentNode.insertBefore(tabNode, tabNext.nextSibling)
                         contentNode.parentNode.insertBefore(contentNode, contentNext.nextSibling)
@@ -172,13 +168,12 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                 },
                 onMouseUp:function(e){
                     if(this.torn){
-                        // drop it on something.
                         var tabNode = this.view.domNode
                         tabNode.parentNode.removeChild(tabNode)
                         if(this.parentWidget.onTabTearDrop) this.parentWidget.onTabTearDrop(e, this)
                     }
 
-                    // simple animation system
+                    // animate the sliding of the tabs when you let go
                     var start = parseInt(this.view.domNode.style.left)
                     this.app.animate(100, t=>{
                         t=1-t
@@ -241,8 +236,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     }
 
     onMouseOver(e,n){
-        // setState on the thing we are over
-        //this.setState()
     }
 
     closeTabByContent(content){
@@ -260,7 +253,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
         this.setActiveTab(Math.max(0,index - 1))
     }
 
-    // how do i find all childtabs?
     setActiveTab(index){
         this.activeTab = index
         var children = this.childViewByType('TabBg').childViews()
@@ -290,7 +282,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
         return tabs
     }
 
-    // deal with tabfocussing
     onMouseDown(e,n){
         this.setFocus()
     }

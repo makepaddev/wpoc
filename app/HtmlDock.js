@@ -1,8 +1,6 @@
 /**
- *
+ * HTML Dock widget managing the entire docksystem
  */
-
-// alright we have to do droptargets
 
 class HtmlDock extends require('../src/HtmlWidget') {
 
@@ -37,14 +35,11 @@ class HtmlDock extends require('../src/HtmlWidget') {
         }
     }
 
-    // if someone yanks off a tab, we need to deal with the mouseovers
     onTabTear(e, n, empty){
         var dv = this.dropView = new this.DropVis(document.body, {})
-        // what if we tear off the last tab in a splitter,
-        // then we need to rebuild.
         this.dropWidget = n.contentWidget
         this.onTabTearMove(e, n)
-        if(empty){ // lets rebuild to allow a splitter to fold
+        if(empty){
             this.data = this.serialize()
             this.rebuild()
         }
@@ -124,7 +119,6 @@ class HtmlDock extends require('../src/HtmlWidget') {
     }
 
     onTabTearDrop(e, n){
-        // edit the data
         var node =  this.dropView.domNode
         node.parentNode.removeChild(node)
   
@@ -143,7 +137,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 uid:this.dropWidget.uid,
                 title:this.dropWidget.title
             }
-            if(this.dropPart == 0){ // add to tabs
+            if(this.dropPart == 0){ 
                 node.activeTab = node.tabs.push(newTab) - 1
             }
             else if(this.dropPart === 1){ // split left
@@ -220,6 +214,10 @@ class HtmlDock extends require('../src/HtmlWidget') {
         this.serialize()
     }
 
+    findWidgetByUid(uid){
+        // find the widget by UID
+    }
+
     hasUid(uid){
         var data = this.serialize()
         function walk(node){
@@ -246,9 +244,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
             }
             else if(node.type === 'Tabs'){
                 if(node.group === group){
-                    // lets set the selectedIndex
-                    node.activeTab = 
-                        node.tabs.push(newTemplate) - 1
+                    node.activeTab = node.tabs.push(newTemplate) - 1
                 }
             }
         }
@@ -259,13 +255,13 @@ class HtmlDock extends require('../src/HtmlWidget') {
 
     // serialize the state of the entire dock from DOM
     serialize(tabsOut){
-        // lets serialize our data
+        
         function serialize(node, path){
             if(!node) return null
             // we only recur on splitters
             if(node.type === 'Splitter'){
                 if(path) path = path+'/'
-                // lets grab the things 'in' the SplitWrapper
+                
                 var data = node.getSplitted()
                 var split = {
                     type:'Splitter',
@@ -274,9 +270,8 @@ class HtmlDock extends require('../src/HtmlWidget') {
                     pane1:serialize(data[0], path+'1'),
                     pane2:serialize(data[1], path+'2') 
                 }
-                // so what do we do when a tab in a splitter is empty?
+                
                 if(split.pane1.type === 'Tabs' && split.pane1.tabs.length === 0){
-                    // we have to remove ourselves 
                     return split.pane2
                 }
                 else if(split.pane2.type === 'Tabs' && split.pane2.tabs.length === 0){
@@ -298,7 +293,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                     tabs:out
                 }
             }
-            else{ // its something else
+            else{ // its something else, content usually
                 return {
                     type:node.type,
                     uid:node.uid,
@@ -309,7 +304,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
         return serialize(this.childWidgets()[0], '')
     }
 
-    // build deserializes
+    // build deserializes the serialized form
     build(){
         return {
             width:this.width,

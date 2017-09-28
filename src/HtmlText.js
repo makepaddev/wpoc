@@ -1,5 +1,5 @@
 /**
- * Defines a coherent part of the app.
+ * HTML Text view
  */
 
 class HtmlText extends require('./HtmlView') {
@@ -7,7 +7,6 @@ class HtmlText extends require('./HtmlView') {
     constructor(parent, props, noText) {
         super(parent, props)
         if(!parent) return
-        // lets get our icon in there
         if(!noText) this.domNode.innerHTML = props.text || this.text
     }
 

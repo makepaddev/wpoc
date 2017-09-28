@@ -1,5 +1,5 @@
 /**
- * Defines a coherent part of the app.
+ * HTMLView, the main Div wrapper
  */
 
 var CssCache = new WeakSet()
@@ -20,10 +20,12 @@ class HtmlView extends require('./Base') {
     constructor(parent, props) {
         super();
         if(!parent) return
+
         // lets compute a CSS cache.
         var proto = Object.getPrototypeOf(this)
         if(!CssCache.has(proto)){
             var p = proto
+
             // build a pretty findable name
             var cls = p.constructor.name
             if(cls === 'extended') cls = p.constructor.__name__
@@ -33,6 +35,7 @@ class HtmlView extends require('./Base') {
                 cls = p.constructor.name + '_' + cls
             }
             proto.$cssClass =  cls + '_' + (CssId++)
+
             // lets make a new css class based on our props
             var rule = '.'+proto.$cssClass+'{\n'
             for(var key in this._css){
@@ -73,6 +76,7 @@ class HtmlView extends require('./Base') {
         var dStyle = domNode.style
         this.$currentClass = this.$cssClass
         domNode.classList.add(this.$cssClass)
+
         // lets do the style props as immediate inline styles
         for(var key in props){
             if(key in this._css){

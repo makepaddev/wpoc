@@ -1,5 +1,5 @@
 /**
- *
+ * Button widget
  */
 
 class HtmlButton extends require('../src/HtmlWidget') {
@@ -90,6 +90,10 @@ class HtmlButton extends require('../src/HtmlWidget') {
     }
 
     onBuilt(){
+    }
+    
+    onClick(){
+
     }
 
     build(){

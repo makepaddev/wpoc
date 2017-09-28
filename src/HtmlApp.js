@@ -35,7 +35,6 @@ class HtmlApp extends HtmlWidget {
 
         var ta = this.textArea = document.createElement('textarea')
         ta.className = "wpoc"
-        //ta.style.position = 'relative'
         ta.style.top = '-100px'
         ta.style.left = '-100px'
         ta.style.height = '0px'
@@ -103,14 +102,14 @@ class HtmlApp extends HtmlWidget {
         mouseNode.addEventListener('mousedown',e=>{
             var n = e.srcElement.$vnode
             capture = n
-            if(n && n.widget){ // set the focus to our hidden text area
+            if(n && n.widget){ 
                 if(this.$isEditing){
                     this.$isEditing(ta.value)
                     this._stopEdit()
                 }
+
                 // lets set focus to our textarea
                 ta.focus()
-                // check if we are editing, ifso stop editing
 
                 var time = Date.now()
                 if(clickLast !== n.widget){
@@ -136,7 +135,7 @@ class HtmlApp extends HtmlWidget {
         })
 
         mouseNode.addEventListener('mouseup',e=>{
-            var n = capture//e.srcElement.$vnode
+            var n = capture
             if(n && n.widget && n.widget.onMouseUp){
                 n.widget.onMouseUp(e, n)
             }
@@ -244,11 +243,11 @@ class HtmlApp extends HtmlWidget {
     }
    
     _buildNode(node, parent, widget){
-        // alright lets process it
+        
         if(node.constructor === Object){
-            // its a plain object
+           
             var id = node.id || 0
-            // create node
+            
             var type, walk = widget
             while(!type && walk){
                 type = walk[node.type] 
@@ -259,7 +258,8 @@ class HtmlApp extends HtmlWidget {
                 console.log('Cant instance type '+node.type, widget)
                 return
             }
-            // see if we can reuse a uid'ed node.
+            
+            // see if we can reuse a uid
             var main
             if(node.uid !== undefined){
                 main = this.uids[node.uid]
@@ -267,15 +267,14 @@ class HtmlApp extends HtmlWidget {
                 else main.__reused__ = true
             }
             else main = new type(parent.domNode, node)
-            // ok how do we reuse it
+
 
             main.parentView = parent
             main.type = node.type
             main.parentWidget = widget
-            // if main is not of type View, recur
+
             if(main.__isWidget__){
-                if(main.__reused__){ // just have to move the old domnode
-                    // move main.view into the new parent
+                if(main.__reused__){ // reuse the old one
                     parent.domNode.appendChild(main.view.domNode)
                 }
                 else{
@@ -314,15 +313,15 @@ class HtmlApp extends HtmlWidget {
             this._raf = undefined
             this.$rebuilds = []
             for(var i = 0; i < rebuilds.length; i++){
-                // find the relevant html node
+
                 var node = rebuilds[i]
                 var nest = node
                 while(nest && !nest.__isView__){
                     nest = nest.nest
                 }
-                // toss it
+
                 nest.domNode.parentNode.removeChild(nest.domNode)
-                // just rebuild it
+
                 node.view = node.nest = undefined
                 this._buildNode(node.build(), node.parentView, node)
                 this.pollResize()
@@ -331,7 +330,6 @@ class HtmlApp extends HtmlWidget {
     }
 
     _rebuild(parent){
-    	// lets call build recursively
         this._buildNode(this.build(), parent, this)
         if(this.onBuilt) this.onBuilt()
     }

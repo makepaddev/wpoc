@@ -1,5 +1,5 @@
 /**
- * Defines a coherent part of the app.
+ * The main HTML Widget
  */
 
 let Utils = require('./Utils');
@@ -51,9 +51,9 @@ class HtmlWidget extends require('./Base') {
         this.state = ''
     }
 
+    // recursively set a state on a widget
     _setState(state, htmlView){
         htmlView.setState(state)
-        // get children and recur
         var cn = htmlView.domNode.childNodes
         for(var i = 0; i < cn.length; i++){
             var childView = cn[i].$vnode
@@ -64,7 +64,6 @@ class HtmlWidget extends require('./Base') {
         }
     }
 
-    // set all HTML View elements belonging to this node to a certain state
     setState(state){
         this.state = state
         this._setState(state, this.view)
@@ -95,8 +94,6 @@ class HtmlWidget extends require('./Base') {
     }
     
     rebuild() {
-        // lets flag us as need rebuild,
-        // however the parent shouldnt need to rebuild.
         this.app._addRebuild(this)
     }
 

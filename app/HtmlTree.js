@@ -1,5 +1,5 @@
 /**
- *
+ * Tree widget
  */
 
 class HtmlTree extends require('../src/HtmlWidget') {
@@ -101,10 +101,6 @@ class HtmlTree extends require('../src/HtmlWidget') {
 
     }
     
-    startEdit(){
-        // find the node at current cursor pos
-    }
-
     findPath(data, node, path){
         if(data === node){
             path.unshift(data)
@@ -126,16 +122,13 @@ class HtmlTree extends require('../src/HtmlWidget') {
         this.setFocus()
         this.cursorPos = n.id
 
-        // lets open the file somewhere.
-        
         var node = this.nodes[n.id]
-        // lets build a path from this node
+
         var path = []
         this.findPath(this.data, node, path)
         if(!node.folder && e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
         if(n.type === 'Text'){
-            if(e.clickCount === 2){
-                // lets set up a text edit with the right size
+            if(e.clickCount === 2){ // start renaming
                 var textNode = n.domNode
                 var bgNode = n.domNode.parentNode
                 var textPos = this.app._absPos(textNode)
@@ -167,20 +160,6 @@ class HtmlTree extends require('../src/HtmlWidget') {
 
     onBlur(){
         this.rebuild()
-    }
-    
-    onMouseMove(e, n){
-    }
-    
-    onMouseUp(e, n){
-    }
-
-    onResize(){
-    }
-
-    onBuilt(){
-        // lets create our tree out of html elements directly
-
     }
 
     buildTree(node, out, nodes, depth){

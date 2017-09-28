@@ -1,5 +1,5 @@
 /**
- *
+ * HTML Editor wrapping Ace and a button bar
  */
 
 class HtmlEditor extends require('../src/HtmlWidget') {

@@ -19,7 +19,10 @@ class IDE extends HtmlApp {
     onOpenFile(file){
         var dock = this.childWidgetByType('Dock')
         // lets see if we already have this uid
-        if(dock.hasUid('Edit'+file)) return
+        if(dock.hasUid('Edit'+file)){
+            // make this thing the active tab somehow.
+            return
+        }
         dock.addTab(
             "editors",
             {type:'Editor', uid:'Edit'+file, file:file, title:file.slice(file.lastIndexOf('/')+1)}

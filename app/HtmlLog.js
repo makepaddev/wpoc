@@ -1,5 +1,5 @@
 /**
- *
+ * Log view
  */
 
 class HtmlLog extends require('../src/HtmlWidget') {

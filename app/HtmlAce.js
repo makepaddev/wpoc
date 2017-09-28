@@ -1,5 +1,5 @@
 /**
- *
+ * ACe wrapper widget
  */
 
 var ace = require('../ace/lib/ace/ace.js')

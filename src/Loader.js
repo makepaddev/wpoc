@@ -189,7 +189,7 @@
             }
             return parent + '/' + path
         }
-        //if we dont have a path, we have to offset it to our modules
+
         var slash = path.indexOf('/')
         if(slash === -1) return '/' + path
         var mpath = modulePaths[path.slice(0,slash)]
