@@ -37,8 +37,12 @@ class IDE extends HtmlApp {
             'Editor': require('./app/HtmlEditor').extend({
                 CloseButton:{
                     onClick(){ 
+                        var dock = this.parentWidgetByType('Dock')
                         var tabs = this.parentWidgetByType('Tabs')
                         tabs.closeTabByContent(this.parentWidgetByType('Editor'))
+                        var data = dock.serialize()
+                        dock.data = data
+                        dock.rebuild()
                     },
                 }
             }),
