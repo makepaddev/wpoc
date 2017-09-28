@@ -23,13 +23,13 @@ class HtmlDock extends require('../src/HtmlWidget') {
             }),
             'Tabs': require('./HtmlTabs').extend({
                 onTabTear(e, n, empty){
-                    this.app.childWidgetByType('Dock').onTabTear(e, n, empty)
+                    this.parentWidgetByType('Dock').onTabTear(e, n, empty)
                 },
                 onTabTearMove(e, n){
-                   this.app.childWidgetByType('Dock').onTabTearMove(e,n)
+                   this.parentWidgetByType('Dock').onTabTearMove(e,n)
                 },
                 onTabTearDrop(e, n){
-                   this.app.childWidgetByType('Dock').onTabTearDrop(e,n)
+                   this.parentWidgetByType('Dock').onTabTearDrop(e,n)
                }
             })
         }

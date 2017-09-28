@@ -16,7 +16,7 @@ class HtmlButton extends require('../src/HtmlWidget') {
                 width:undefined,
                 height:undefined,
                 borderRadius:'7px',
-                borderWidth:'0.06em',
+                borderWidth:'1px',
                 paddingTop:'5px',
                 paddingRight:'5px',
                 paddingBottom:'5px',
