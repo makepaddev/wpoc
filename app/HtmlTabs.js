@@ -122,7 +122,6 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                             dx < -0.5 * tabNode.offsetWidth || 
                             dx > tabNode.parentNode.offsetWidth -0.5*tabNode.offsetWidth)){
                         
-                        
                         // fetch the main content 
                         this.contentWidget = contentNode.children[0].$vnode.parentWidget
                         contentNode.parentNode.removeChild(contentNode)
@@ -134,7 +133,9 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                         tabNode.style.zIndex = 100000
                         tabNode.style.float = 'none'
                         if(this.parentWidget.onTabTear) this.parentWidget.onTabTear(e, this, empty)
-                        
+
+                        this.parentWidget.setActiveTab(Math.max(0, this.index-1))
+                        // select previous tab
                         this.torn = true
                     }
                     if(this.torn){

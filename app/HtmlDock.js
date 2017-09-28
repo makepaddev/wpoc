@@ -157,6 +157,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pane2 = {
                     type:'Tabs',
                     tabs:node.tabs,
+                    activeTab:node.activeTab,
                     group:node.group
                 }
                 node.tabs = undefined
@@ -168,6 +169,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pane1 = {
                     type:'Tabs',
                     tabs:node.tabs,
+                    activeTab:node.activeTab,
                     group:node.group
                 }                
                 node.pane2 = {
@@ -187,6 +189,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pane2 = {
                     type:'Tabs',
                     group:node.group,
+                    activeTab:node.activeTab,
                     tabs:node.tabs,
                 }
                 node.tabs = undefined
@@ -198,6 +201,7 @@ class HtmlDock extends require('../src/HtmlWidget') {
                 node.pane1 = {
                     type:'Tabs',
                     tabs:node.tabs,
+                    activeTab:node.activeTab,
                     group:node.group
                 }                
                 node.pane2 = {
