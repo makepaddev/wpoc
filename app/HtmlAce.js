@@ -4,6 +4,11 @@
 
 var ace = require('../ace/lib/ace/ace.js')
 
+// preload these so it doesnt flicker
+require('../ace/lib/ace/mode/javascript.js')
+require('../ace/lib/ace/theme/twilight.js')
+require('text!../ace/lib/ace/theme/twilight.css')
+
 class HtmlAce extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
@@ -24,12 +29,11 @@ class HtmlAce extends require('../src/HtmlWidget') {
     }
 
     properties() {
+        var editor = ace.edit(undefined);
+
         this.annotations = {
         };
         this.dependencies = {
-            CloseButton:require('./HtmlButton').extend({
-
-            })
         }
     }
 

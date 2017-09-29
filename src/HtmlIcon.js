@@ -14,9 +14,14 @@ class HtmlIcon extends require('./HtmlText') {
     properties() {
         // lets load our fontawesome font.
         var f = new FontFace("fontawesome", "url(resources/fontawesome-webfont.woff)", {});
-        f.load().then(_=>{
+
+        // puts a promise on this item forcing the build to wait
+        this.__loadPromise__ = f.load()
+        this.__loadPromise__.then(_=>{
+            this.__loadPromise__ = undefined
             document.fonts.add(f)
         })
+
         this.fontFamily = 'fontawesome'
         this.fontSize = '1em'
         this.float = 'left'

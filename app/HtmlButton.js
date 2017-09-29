@@ -46,6 +46,9 @@ class HtmlButton extends require('../src/HtmlWidget') {
                 Bg:{
                     backgroundColor:'#aaa',
                     borderColor:'#999',
+                },
+                Icon:{
+                    color:'black'
                 }
             },
             over:{
@@ -64,7 +67,7 @@ class HtmlButton extends require('../src/HtmlWidget') {
     }
 
     onMouseOver(e, n){
-        this.setState('over')
+        this.setState(this.down?'clicked':'over')
         this.in = true
     }
 

@@ -173,7 +173,8 @@ class HtmlApp extends HtmlWidget {
         })
 
         window.setTimeout(_=>{
-            this._rebuild(this.view)
+            this.parentView = this.view
+            this._rebuild(this)
         },0)
         this._animate = this._animate.bind(this)
     }
@@ -242,7 +243,7 @@ class HtmlApp extends HtmlWidget {
         ta.selectionEnd = text.length
     }
    
-    _buildNode(node, parent, widget){
+    _buildNode(node, parent, widget, asyncShow){
         
         if(node.constructor === Object){
            
@@ -266,7 +267,12 @@ class HtmlApp extends HtmlWidget {
                 if(!main) main = this.uids[node.uid] = new type(parent.domNode, node)
                 else main.__reused__ = true
             }
-            else main = new type(parent.domNode, node)
+            else{
+                main = new type(parent.domNode, node)
+                if(asyncShow && main.__loadPromise__ && asyncShow.indexOf(main.__loadPromise__) === -1){
+                    asyncShow.push(main.__loadPromise__)
+                }
+            }
 
 
             main.parentView = parent
@@ -280,7 +286,7 @@ class HtmlApp extends HtmlWidget {
                 else{
                     // build us instead
                     main.app = this
-                    this._buildNode(main.build(), parent, main)
+                    this._buildNode(main.build(), parent, main, asyncShow)
                     if(main.onBuilt) main.onBuilt()
                     if(!widget.nest) widget.nest = main
                     if(node && node.state) main.setState(node.state)
@@ -298,7 +304,7 @@ class HtmlApp extends HtmlWidget {
                 var children = node.children
                 if(children) for(var i = 0; i < children.length; i++){
                     var child = children[i]
-                    this._buildNode(child, main, widget)
+                    this._buildNode(child, main, widget, asyncShow)
                 }
             }
         }
@@ -323,15 +329,39 @@ class HtmlApp extends HtmlWidget {
                 nest.domNode.parentNode.removeChild(nest.domNode)
 
                 node.view = node.nest = undefined
-                this._buildNode(node.build(), node.parentView, node)
-                this.pollResize()
+                
+                this._rebuild(node)
+               
+                //this.pollResize()
             }
         })
     }
 
-    _rebuild(parent){
-        this._buildNode(this.build(), parent, this)
+    _rebuild(node){
+        var asyncShow = []
+        // ok so we are rebuilding this node.
+        var style = node.parentView.domNode.style
+        var disp = style.display
+        // turn off parent visibility whilst building to allow async showing
+        style.display = 'none'
+
+        // store all load promises
+        var asyncShow = []
+        this._buildNode(node.build(), node.parentView, node, asyncShow)
+ 
         if(this.onBuilt) this.onBuilt()
+
+        // if nodes have load dependencies, wait with flipping the visible bit on the parent
+        if(asyncShow.length){
+            Promise.all(asyncShow).then(_=>{
+                style.display = disp
+                this.pollResize()
+            })
+        }
+        else{
+            style.display = disp
+            this.pollResize()
+        }
     }
 }
 

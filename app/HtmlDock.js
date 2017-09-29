@@ -239,12 +239,12 @@ class HtmlDock extends require('../src/HtmlWidget') {
         var data = this.serialize()
         function walk(node){
             if(node.type === 'Splitter'){
-                walk(node.pane1)
-                walk(node.pane2)
+                return walk(node.pane1) || walk(node.pane2)
             }
             else if(node.type === 'Tabs'){
                 if(node.group === group){
                     node.activeTab = node.tabs.push(newTemplate) - 1
+                    return true
                 }
             }
         }

@@ -39,6 +39,8 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                     
                 },
                 Bg:{
+                    paddingLeft:'5px',
+                    paddingRight:'4px',
                     float:'left'
                 }
             })

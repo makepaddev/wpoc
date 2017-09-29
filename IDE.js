@@ -41,6 +41,8 @@ class IDE extends HtmlApp {
                         var tabs = this.parentWidgetByType('Tabs')
                         tabs.closeTabByContent(this.parentWidgetByType('Editor'))
                         var data = dock.serialize()
+                        // what we need to do is remove this tab by UID
+                        // from the data, not use closetab by content
                         dock.data = data
                         dock.rebuild()
                     },
@@ -65,8 +67,6 @@ class IDE extends HtmlApp {
         }
     }
 
-    // ok we need a 'dock' widget with a livecycle for the open
-    // documents
     build(){
         return {
             type:'Dock'
