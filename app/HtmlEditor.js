@@ -13,7 +13,9 @@ class HtmlEditor extends require('../src/HtmlWidget') {
         };
         this.dependencies = {
             Ace:require('./HtmlAce').extend({
-
+                onCleanChange(clean){
+                    this.parentWidget.onCleanChange(clean)
+                }
             }),
             EditBar:{
                 backgroundColor:'#222',
@@ -45,6 +47,9 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 }
             })
         }
+    }
+
+    onCleanChange(clean){
     }
 
     build(){

@@ -190,6 +190,12 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                     this.setState(this.isSelected()?'selected':'')
                 },
                 
+                setText(text){
+                    this.text = text
+                    var txt = this.childViewByType('Text')
+                    txt.domNode.innerHTML = text
+                },
+
                 build(){
                     return {
                         type:'Bg',
@@ -238,19 +244,23 @@ class HtmlTabs extends require('../src/HtmlWidget') {
     onMouseOver(e,n){
     }
 
-    closeTabByContent(content){
+    tabByContents(content){
         var domNode = content.view.domNode
         var content = domNode.parentNode
-
         var index = 0
         var child = content
         while( (child = child.previousSibling) != null ) index++
-        // remove tab
         var tabs = content.parentNode.parentNode.children[0]
-        tabs.removeChild(tabs.children[index])
-        // remove content
-        content.parentNode.removeChild(content)
-        this.setActiveTab(Math.max(0,index - 1))
+        return tabs.children[index].$vnode.widget
+    }
+
+    closeTabByContent(content){
+        var tab = this.tabByContents(content)
+        var containerNode = content.view.domNode.parentNode
+        var tabNode = tab.view.domNode
+        containerNode.parentNode.removeChild(containerNode)
+        tabNode.parentNode.removeChild(tabNode)
+        this.setActiveTab(Math.max(0, tab.index - 1))
     }
 
     setActiveTab(index){

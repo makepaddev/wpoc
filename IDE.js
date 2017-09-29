@@ -46,7 +46,16 @@ class IDE extends HtmlApp {
                         dock.data = data
                         dock.rebuild()
                     },
+                },
+                onCleanChange(clean){
+                    var tabs = this.parentWidgetByType('Tabs')
+                    var tab = tabs.tabByContents(this.parentWidgetByType('Editor'))
+                    var text = tab.text
+                    if(clean && text.charAt(0) === '*') text = text.slice(1)
+                    else if(!clean && text.charAt(0) !== '*') text = '*' + text
+                    tab.setText(text)
                 }
+
             }),
             'Log': require('./app/HtmlLog').extend({
                 
