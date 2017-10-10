@@ -54,8 +54,26 @@ class IDE extends HtmlApp {
                     if(clean && text.charAt(0) === '*') text = text.slice(1)
                     else if(!clean && text.charAt(0) !== '*') text = '*' + text
                     tab.setText(text)
-                }
+                },
+                onSave(text){
+                    console.log("SAVING")
+                    var req = new XMLHttpRequest()
+                    // compare todo against domains
+                    req.addEventListener("error", _=>{
+                        // error saving, handle it
+                    })
+                    //req.responseType = 'text'
+                    req.addEventListener("load", _=>{
+                        if(req.status !== 200){
+                            // error saving
+                        }
+                        // no error saving
+                    })
 
+                    //!TODO add domain checks to url
+                    req.open("POST", location.origin+this.file, true)
+                    req.send(text)
+                }
             }),
             'Log': require('./app/HtmlLog').extend({
                 

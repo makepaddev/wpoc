@@ -39,6 +39,7 @@ function pollWatchlist(){
 		for(let i = 0; i < results.length; i++){
 			var result = results[i]
 			result.stat.atime = null
+			result.stat.atimeMs = null
 			var newtag = JSON.stringify(result.stat)
 			var oldtag = tags[result.filename]
 			if(oldtag === -1) continue

@@ -33,9 +33,12 @@ class HtmlAce extends require('../src/HtmlWidget') {
         commands.addCommand({
             name: "save",
             bindKey: {win: "Ctrl-S", mac: "Command-S"},
-            exec: function(arg) {
+            exec: arg => {
+                this.onSave(editor.getValue())
                 // lets update the undo 
-                editor.getUndoManager().markClean()
+                editor.getSession().getUndoManager().markClean()
+                this.clean = true
+                this.onCleanChange(this.clean)
             }
         });
         /*
@@ -73,6 +76,10 @@ class HtmlAce extends require('../src/HtmlWidget') {
 
     onCleanChange(clean){
 
+    }
+
+    onSave(text){
+        
     }
 
     properties() {

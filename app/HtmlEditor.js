@@ -15,6 +15,9 @@ class HtmlEditor extends require('../src/HtmlWidget') {
             Ace:require('./HtmlAce').extend({
                 onCleanChange(clean){
                     this.parentWidget.onCleanChange(clean)
+                },
+                onSave(text){
+                    this.parentWidget.onSave(text)
                 }
             }),
             EditBar:{
