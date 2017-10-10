@@ -204,6 +204,8 @@ class HtmlView extends require('./Base') {
             height:'100%',
             float:'left',
             overflow:undefined,
+            overflowX:undefined,
+            overflowY:undefined,
             textOverflow:undefined,
             cursor:undefined,
             position:undefined,

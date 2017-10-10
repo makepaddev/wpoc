@@ -212,7 +212,8 @@ class HtmlTabs extends require('../src/HtmlWidget') {
                 paddingTop:'0.25em',
                 backgroundColor:'black',
                 height:'1.8em',
-                overflow:'hidden'
+                overflowY:'hidden',
+                overflowX:'auto'
             },
             TabContainer:{
                 type:'View',
@@ -273,6 +274,11 @@ class HtmlTabs extends require('../src/HtmlWidget') {
             if(i === index){
                 tab.setState('selectedOver')
                 contents[i].domNode.style.display = 'block'
+
+                var widget = contents[i].domNode.children[0].$vnode.widget
+                if(widget.onTabFocus){
+                    widget.onTabFocus()
+                }
             }
             else{
                 tab.setState('')

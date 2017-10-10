@@ -98,15 +98,20 @@ class HtmlApp extends HtmlWidget {
         var clickCount = 0
         var clickStamp = 0
         var clickLast = undefined
-
+        window.addEventListener('mousedown', e=>{
+            if(e.srcElement !== ta && this.$isEditing){
+                this.$isEditing(ta.value)
+                this._stopEdit()
+            }
+        })
         mouseNode.addEventListener('mousedown',e=>{
             var n = e.srcElement.$vnode
             capture = n
             if(n && n.widget){ 
-                if(this.$isEditing){
-                    this.$isEditing(ta.value)
-                    this._stopEdit()
-                }
+                //if(this.$isEditing){
+                  //  this.$isEditing(ta.value)
+                   // this._stopEdit()
+                //}
 
                 // lets set focus to our textarea
                 ta.focus()
@@ -143,6 +148,8 @@ class HtmlApp extends HtmlWidget {
             pollResize()
         })
         mouseNode.addEventListener('mousemove',e=>{
+            if(this.delayTimer) clearTimeout(this.delayTimer)
+            this.delayTimer = undefined
             // check if we are captured
             if(capture){
                 if(capture.widget && capture.widget.onMouseMove){
@@ -291,6 +298,7 @@ class HtmlApp extends HtmlWidget {
                     if(!widget.nest) widget.nest = main
                     if(node && node.state) main.setState(node.state)
                 }
+                if(main.onRebuilt) main.onRebuilt()
             }
             else{
                 main.widget = widget
@@ -335,6 +343,13 @@ class HtmlApp extends HtmlWidget {
                 //this.pollResize()
             }
         })
+    }
+
+    delayClick(callback){
+        if(this.delayTimer) clearTimeout(this.delayTimer)
+        this.delayTimer = setTimeout(_=>{
+            callback()
+        }, 500)
     }
 
     _rebuild(node){

@@ -119,28 +119,35 @@ class HtmlTree extends require('../src/HtmlWidget') {
     }
 
     onMouseDown(e,n){
-        this.setFocus()
+        if(!this.hasFocus()) this.setFocus()
+
+        var changed = this.cursorPos !== n.id
         this.cursorPos = n.id
 
         var node = this.nodes[n.id]
 
         var path = []
         this.findPath(this.data, node, path)
-        if(!node.folder && e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
+        if(node && !node.folder && e.clickCount > 1 && this.onSelect && this.onSelect(node, path)) return this.rebuild()
+
         if(n.type === 'Text'){
-            if(e.clickCount === 2){ // start renaming
-                var textNode = n.domNode
-                var bgNode = n.domNode.parentNode
-                var textPos = this.app._absPos(textNode)
-                var bgPos = this.app._absPos(bgNode)
-                var w = bgNode.offsetWidth - (textPos[0] - bgPos[0]) - 5
-                var h = bgNode.offsetHeight - (textPos[1] - bgPos[1])
-                var editId = n.id
-                this.app._editText(textPos[0], bgPos[1], w, h, this.nodes[n.id].name, v=>{
-                    if(v !== null){
-                        this.nodes[editId].name = v
-                        this.rebuild()
-                    }
+            if(e.clickCount === 1){
+                this.app.delayClick(_=>{
+                    // start renaming
+                    var textNode = n.domNode
+                    var bgNode = n.domNode.parentNode
+                    var textPos = this.app._absPos(textNode)
+                    var bgPos = this.app._absPos(bgNode)
+                    var w = bgNode.offsetWidth - (textPos[0] - bgPos[0]) - 5
+                    var h = bgNode.offsetHeight - (textPos[1] - bgPos[1])
+
+                    var editId = n.id
+                    this.app._editText(textPos[0], bgPos[1], w, h, this.nodes[n.id].name, v=>{
+                        if(v !== null){
+                            this.nodes[editId].name = v
+                            this.rebuild()
+                        }
+                    })
                 })
             }
         }
@@ -149,9 +156,10 @@ class HtmlTree extends require('../src/HtmlWidget') {
             if(!node) return
             if(node.folder){
                 node.open = !node.open
+                changed = true
             }
         }
-        this.rebuild()
+        if(changed) this.rebuild()
     }
 
     onFocus(){

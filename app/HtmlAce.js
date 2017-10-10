@@ -13,14 +13,6 @@ class HtmlAce extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
         super(parent, props);
-        if(this.file){
-            require(['text!'+this.file], result=>{
-                this.clean = true
-                this.editor.session.setValue(result)
-                //this.editor.getUndoManager().$undoStack.length = 0
-                this.editor.selection.setRange({start:{row:0,col:0},end:{row:0,col:0}})
-            })
-        }
     }
 
     onBuilt(){
@@ -37,6 +29,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
                 this.onSave(editor.getValue())
                 // lets update the undo 
                 editor.getSession().getUndoManager().markClean()
+                window.localStorage.removeItem(this.file)
                 this.clean = true
                 this.onCleanChange(this.clean)
             }
@@ -59,19 +52,36 @@ class HtmlAce extends require('../src/HtmlWidget') {
         });*/
 
         editor.on('input', e=>{
+            // store it in local storage
             if(editor.getSession().getUndoManager().isClean()){
+                window.localStorage.removeItem(this.file)
                 if(!this.clean){
                     this.clean = true
                     this.onCleanChange(this.clean)
                 }
             }
             else{
+                window.localStorage.setItem(this.file, editor.getValue())
                 if(this.clean){
                     this.clean = false
                     this.onCleanChange(this.clean)
                 }
             }
         });
+
+        if(this.file){
+            var value = window.localStorage.getItem(this.file)
+            require(['text!'+this.file], result=>{
+                this.clean = true
+                this.editor.session.setValue(result)
+                this.editor.selection.setRange({start:{row:0,col:0},end:{row:0,col:0}})
+                //this.editor.getUndoManager().$undoStack.length = 0
+                if(typeof value === 'string'){
+                    this.editor.setValue(value)
+                    this.editor.selection.setRange({start:{row:0,col:0},end:{row:0,col:0}})
+                }
+            })
+        }
     }  
 
     onCleanChange(clean){
@@ -80,6 +90,10 @@ class HtmlAce extends require('../src/HtmlWidget') {
 
     onSave(text){
         
+    }
+
+    onTabFocus(){
+        this.editor.focus()
     }
 
     properties() {

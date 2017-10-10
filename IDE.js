@@ -1,8 +1,8 @@
 
-var HtmlApp = require('./src/HtmlApp');
-
-class IDE extends HtmlApp {
-
+var HtmlApp = require('./src/HtmlApp'); //hi
+ 
+class IDE extends HtmlApp {   
+    
     constructor(domNode) {
         super(domNode);
         // alright lets create a HtmlDock
@@ -19,7 +19,7 @@ class IDE extends HtmlApp {
     onOpenFile(file){
         var dock = this.childWidgetByType('Dock')
         // lets see if we already have this uid
-        if(dock.hasUid('Edit'+file)){
+        if(dock.hasUid('Edit' + file)){
             // make this thing the active tab somehow.
             return
         }
@@ -47,7 +47,11 @@ class IDE extends HtmlApp {
                         dock.rebuild()
                     },
                 },
+                onRebuilt(){
+                    this.onCleanChange(!this.dirty)
+                },
                 onCleanChange(clean){
+                    this.dirty = !clean
                     var tabs = this.parentWidgetByType('Tabs')
                     var tab = tabs.tabByContents(this.parentWidgetByType('Editor'))
                     var text = tab.text
@@ -56,7 +60,6 @@ class IDE extends HtmlApp {
                     tab.setText(text)
                 },
                 onSave(text){
-                    console.log("SAVING")
                     var req = new XMLHttpRequest()
                     // compare todo against domains
                     req.addEventListener("error", _=>{
@@ -69,7 +72,6 @@ class IDE extends HtmlApp {
                         }
                         // no error saving
                     })
-
                     //!TODO add domain checks to url
                     req.open("POST", location.origin+this.file, true)
                     req.send(text)

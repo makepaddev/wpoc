@@ -6,6 +6,7 @@ class HtmlEditor extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
         super(parent, props);
+        
     }
 
     properties() {
@@ -53,6 +54,10 @@ class HtmlEditor extends require('../src/HtmlWidget') {
     }
 
     onCleanChange(clean){
+    }
+
+    onTabFocus(){
+        this.childViewByType('EditContainer').childWidgetByType('Ace').onTabFocus()
     }
 
     build(){
