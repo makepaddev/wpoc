@@ -11,6 +11,9 @@ class HtmlPreview extends require('../src/HtmlWidget') {
     properties() {
         this.dependencies = {
             Frame:require('../src/HtmlFrame').extend({
+                onMessage(msg){
+                    this.widget.onMessage(msg)
+                }
             }),
             PreviewBar:{
                 backgroundColor:'#222',
@@ -40,9 +43,35 @@ class HtmlPreview extends require('../src/HtmlWidget') {
                     paddingRight:'4px',
                     float:'left'
                 }
+            }),
+            TestButton:require('./HtmlButton').extend({
+                icon:'envelope',
+                onClick(){
+                    this.parentWidget.onTest()
+                },
+                Bg:{
+                    marginLeft:'5px',
+                    paddingLeft:'5px',
+                    paddingRight:'4px',
+                    float:'left'
+                }
             })
-
         }
+    }
+    
+    onMessage(msg){
+        console.log("Received from iframe", msg)
+    }
+
+    onTest(){
+        var frame = this.childViewByType('PreviewContainer').childViewByType('Frame')
+        frame.postMessage({
+           msg:"Sending a message"
+        })
+    }
+
+    onBuilt(){
+
     }
 
     onRefresh(){
@@ -57,7 +86,8 @@ class HtmlPreview extends require('../src/HtmlWidget') {
             children:[
                 {type:'PreviewBar', children:[
                     {type:'CloseButton'},
-                    {type:'RefreshButton'}
+                    {type:'RefreshButton'},
+                    {type:'TestButton'}
                 ]},
                 {type:'PreviewContainer',children:[{
                     file:this.file,
