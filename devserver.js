@@ -6,8 +6,8 @@ var Fs = require('fs')
 var Url = require('url')
 var Os = require('os')
 var NodeWebSocket = require('./devwebsocket')
-var server_port = 2002
-var server_interface = '127.0.0.1'
+var server_ports = [2002]
+var server_interfaces = ['127.0.0.1','10.0.1.2']
 
 var mimetable = {
 	'.map':'application/json',
@@ -165,43 +165,39 @@ function requestHandler(req, res){
 	})
 }
 
-try{
-	// simple https test certificates to test getUserMedia, google how to create / set up a self signed https cert for node.js
-	const options = {
-		key: Fs.readFileSync('./devserver-key.test'),
-		cert: Fs.readFileSync('./devserver-cert.test')
-	}
-	var server = Https.createServer(options, requestHandler)
-} 
-catch(x){
-	var server = Http.createServer(requestHandler)
-}
-
 if(process.argv.length === 3){
 	var hostModule = require(process.argv[2])
 }
 
-server.on('upgrade', function(request, socket, header){
-	var sock = new NodeWebSocket(request, socket, header)
-	if(hostModule) hostModule(sock)
-})
+for(var j = 0; j < server_interfaces.length; j++){
+	var server_interface = server_interfaces[j]
+	for(var i = 0; i < server_ports.length; i++){
+		var server_port = server_ports[i]
+		var server = Http.createServer(requestHandler)
 
-server.listen(server_port, server_interface, function(err){
-	if (err) {
-		return console.log('Server error ', err)
-	}
-	// dump what we are listening on
-	var interfaces = Os.networkInterfaces()
-	for(let ifacekey in interfaces){
-		var iface = interfaces[ifacekey]
-		for(let i = 0; i < iface.length; i++){
-			var subiface = iface[i]
-			if(subiface.family !== 'IPv4') continue
-			if(server_interface === '0.0.0.0' || server_interface == subiface.address){
-				console.log('Server is listening on http://'+subiface.address+':'+server_port+'/')
+		server.on('upgrade', function(request, socket, header){
+			var sock = new NodeWebSocket(request, socket, header)
+			if(hostModule) hostModule(sock)
+		})
+
+		server.listen(server_port, server_interface, function(server_port,server_interface,err){
+			if (err) {
+				return console.log('Server error ', err)
 			}
-		}
+			// dump what we are listening on
+			var interfaces = Os.networkInterfaces()
+			for(let ifacekey in interfaces){
+				var iface = interfaces[ifacekey]
+				for(let i = 0; i < iface.length; i++){
+					var subiface = iface[i]
+					if(subiface.family !== 'IPv4') continue
+					if(server_interface === '0.0.0.0' || server_interface == subiface.address){
+						console.log('Server is listening on http://'+subiface.address+':'+server_port+'/')
+					}
+				}
+			}
+			// start the filewatcher
+			pollWatchlist()
+		}.bind(null, server_port, server_interface))
 	}
-	// start the filewatcher
-	pollWatchlist()
-})
+}

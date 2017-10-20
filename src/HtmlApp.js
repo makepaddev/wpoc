@@ -337,7 +337,6 @@ class HtmlApp extends HtmlWidget {
                 nest.domNode.parentNode.removeChild(nest.domNode)
 
                 node.view = node.nest = undefined
-                
                 this._rebuild(node)
                
                 //this.pollResize()
@@ -364,7 +363,7 @@ class HtmlApp extends HtmlWidget {
         var asyncShow = []
         this._buildNode(node.build(), node.parentView, node, asyncShow)
  
-        if(this.onBuilt) this.onBuilt()
+        if(node.onBuilt) node.onBuilt()
 
         // if nodes have load dependencies, wait with flipping the visible bit on the parent
         if(asyncShow.length){

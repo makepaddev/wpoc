@@ -7,12 +7,9 @@
 				"name":"/",
 				"open":true,
 				"folder":[
-					{"name":"IDE.js"},
-					{"name":"devserver.js"},
-					{"name":"devwebsocket.js"},
-					{"name":"app", "folder":[
-						{"name":"HtmlAce.js"},
-						{"name":"HtmlDock.js"}
+					{"name":"project", "open":true,"folder":[
+                        {"name":"app.html"},
+						{"name":"app.js"}
 					]}
 				]
 			}, "title":"Project", "uid":"filetree"}
@@ -21,13 +18,27 @@
     "pane2":{"type":"Splitter", 
         "vertical":false, "pos":0.8,
         "pane1":{
-            "type":"Tabs",
-            "group":"editors",
-            "activeTab":1,
-            "tabs":[
-                {"type":"Log", "uid":"Editors" ,"title":"Editors"},
-                {"type":"Editor", "uid":"Edit/IDE.js", "file":"/IDE.js", "title":"IDE.js"}
-           ]
+            "type":"Splitter", 
+            "vertical":true,
+            "pos":0.5,
+            "pane1":{
+                "type":"Tabs",
+                "group":"editors",
+                "activeTab":1,
+                "tabs":[
+                    {"type":"Log", "uid":"Editors" ,"title":"Editors"},
+                    {"type":"Editor", "uid":"Edit/project/app.js", "file":"/project/app.js", "title":"app.js"}
+               ]
+            },
+            "pane2":{
+                "type":"Tabs",
+                "group":"previews",
+                "activeTab":1,
+                "tabs":[
+                    {"type":"Log", "uid":"Previews" ,"title":"Previews"},
+                    {"type":"Preview", "uid":"Preview/project/app.html", "file":"/project/app.html", "title":"app.html"}
+               ]
+            }
         },
         "pane2":{
             "type":"Tabs",

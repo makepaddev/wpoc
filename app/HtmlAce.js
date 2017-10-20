@@ -12,13 +12,13 @@ require('text!../ace/lib/ace/theme/twilight.css')
 class HtmlAce extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
-        super(parent, props);
+        super(parent, props)
     }
 
     onBuilt(){
-        var editor = this.editor = ace.edit(this.view.domNode);
-        editor.setTheme("ace/theme/twilight");
-        editor.session.setMode("ace/mode/javascript");
+        var editor = this.editor = ace.edit(this.view.domNode)
+        editor.setTheme("ace/theme/twilight")
+        editor.session.setMode("ace/mode/javascript")
         editor.$blockScrolling = Infinity
 
         var commands = editor.commands;
@@ -89,7 +89,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
     }
 
     onSave(text){
-        
+
     }
 
     onTabFocus(){

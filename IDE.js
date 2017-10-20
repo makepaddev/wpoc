@@ -34,6 +34,9 @@ class IDE extends HtmlApp {
         this.dependencies = {
             'Dock': require('./app/HtmlDock').extend({
             }),
+            'Preview':require('./app/HtmlPreview').extend({
+
+            }),
             'Editor': require('./app/HtmlEditor').extend({
                 CloseButton:{
                     onClick(){ 
