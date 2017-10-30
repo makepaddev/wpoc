@@ -36,7 +36,7 @@
                 "activeTab":1,
                 "tabs":[
                     {"type":"Log", "uid":"Previews" ,"title":"Previews"},
-                    {"type":"Preview", "uid":"Preview/project/app.html", "file":"/project/app.html", "title":"app.html"}
+                    {"type":"Preview", "uid":"Preview/project/app.js", "file":"/project/app.js", "title":"app.js"}
                ]
             }
         },

@@ -1,57 +1,74 @@
-(function() {
+(function bootLoader(api) {
+
     Object.defineProperty(window,'_',{
         get:function(){},
         set:console.log.bind(console)
     })
     var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-
-    var loadedSources = {};
+    var loadedSources = {}
+    var fileDeps = {}
     var modulePaths = {}
-    function loadFileContents(absPath){
-        return new Promise(function(resolve, reject){
-            var xhr = new XMLHttpRequest()
-            xhr.addEventListener('error', function(){
-                reject(xhr)
-            })
-            xhr.responseType = 'text'
-            xhr.addEventListener('load', function(){
-                if(xhr.status !==200) return reject(xhr);
-                loadedSources[absPath] = xhr.response;
-                resolve(xhr.response)
-            })
-            xhr.open('GET', location.origin + absPath)
-            xhr.send()
-        })
+    var pendingLoads = {}
+    var loadedModules = {}
+    var extApi = api !== undefined
+
+    if(!api){
+        api = {
+            loadFile(absPath){
+                return new Promise(function(resolve, reject){
+                    var xhr = new XMLHttpRequest()
+                    xhr.addEventListener('error', function(){
+                        reject(xhr)
+                    })
+                    xhr.responseType = 'text'
+                    xhr.addEventListener('load', function(){
+                        if(xhr.status !==200) return reject(xhr);
+                        resolve(xhr.response)
+                    })
+                    xhr.open('GET', location.origin + absPath)
+                    xhr.send()
+                })
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function(){
+            watchFileChange()
+            var relPath = buildBasePath(location.pathname);
+
+            var loaderDivs = document.getElementsByClassName('loader');
+            for(var i =0; i < loaderDivs.length; i++){
+                var main = loaderDivs[i].getAttribute('main');
+                var modules = loaderDivs[i].getAttribute('modules');
+                if(modules){                
+                    var nmods = modules.split(',')
+                    for(var j = 0; j < nmods.length; j++){
+                        var lbl = nmods[j].split(':')
+                        modulePaths[lbl[0]] = lbl[1]
+                    }
+                }
+                var mainAbsPath = buildPath(main, relPath);
+                (function(loaderDiv) {
+                    loadJS(mainAbsPath).then(function() {
+                        setTimeout(function() { // For debugging.
+                            var require = makeRequire("/", {"div": loaderDiv});
+                            var main = require(mainAbsPath);
+                            if(typeof main === 'function'){
+                                new main(loaderDiv)
+                            }
+                        }, 0);
+                    });
+                })(loaderDivs[i]);
+            }
+        });
     }
 
-    function init() {
-        watchFileChange()
-        var relPath = buildBasePath(location.pathname);
-
-        var cvs = document.getElementsByClassName('loader');
-        for(var i =0; i < cvs.length; i++){
-            var main = cvs[i].getAttribute('main');
-            var modules = cvs[i].getAttribute('modules');
-            if(modules){                
-                var nmods = modules.split(',')
-                for(var j = 0; j < nmods.length; j++){
-                    var lbl = nmods[j].split(':')
-                    modulePaths[lbl[0]] = lbl[1]
-                }
-            }
-            var mainAbsPath = buildPath(main, relPath);
-            (function(canvas) {
-                loadJS(mainAbsPath).then(function() {
-                    setTimeout(function() { // For debugging.
-                        var require = makeRequire("/", {"canvas": canvas});
-                        var main = require(mainAbsPath);
-                        if(typeof main === 'function'){
-                            new main(canvas)
-                        }
-                    }, 0);
-                });
-            })(cvs[i]);
-        }
+    // wrap API
+    function loadFileWrapper(absPath){
+        return new Promise(function(resolve, reject){
+            api.loadFile(absPath).then(function(result){
+               loadedSources[absPath] = result
+               resolve(result)
+            }, reject)
+        })
     }
 
     function watchFileChange(){
@@ -77,8 +94,6 @@
         return path.slice(0, path.lastIndexOf('/') + 1);
     }
 
-    var loadedModules = {};
-
     function makeDefine(require, exports, module){
         return function(body){
             body(require, exports, module)
@@ -92,7 +107,7 @@
                 for(var i = 0; i < path.length; i++){
                     var items = buildPath(path[i], basePath).split('!')
                     if(items.length>1){
-                        arr.push(loadFileContents(items[items.length-1]))
+                        arr.push(loadFileWrapper(items[items.length-1]))
                     }
                     else arr.push(loadJS(items[items.length-1]))
                 }
@@ -160,6 +175,29 @@
         require.toUrl = function(path){
             return buildPath(path, basePath);
         }
+
+        require.loadJS = function(path){
+            // lets build up a nice list of deps
+            return new Promise(function(resolve, reject){
+                var rootPath = buildPath(path, basePath)
+                var myDeps = {}
+                loadJS(rootPath).then(function(result){
+                    function findDeps(absPath){
+                        if(myDeps[absPath] !== undefined) return
+                        myDeps[absPath] = loadedSources[absPath]
+                        var deps = fileDeps[absPath]
+                        for(var i = 0; i < deps.length; i++){
+                            findDeps(deps[i].path)
+                        }
+                    }
+                    findDeps(rootPath)
+                    resolve(myDeps)
+                })
+            })
+        }
+
+        require.bootLoader = bootLoader
+
         return require
     }
 
@@ -197,8 +235,6 @@
         return  mpath + path.slice(slash)
     }
 
-    var pendingLoads = {};
-
     function loadJS(absPath) {
         if (pendingLoads[absPath]) {
             return pendingLoads[absPath];
@@ -206,21 +242,34 @@
 
         var basePath = buildBasePath(absPath);
 
-        pendingLoads[absPath] = loadFileContents(absPath).then(function(source) {
+        pendingLoads[absPath] = loadFileWrapper(absPath).then(function(source) {
             var code = source.replace(/\/\*[\S\s]*?\*\//g,'').replace(/\/\/[^\n]*/g,'')
 
-            var deps = [];
+            var deps = []
             code.replace(/require\s*\(\s*['"](.*?)['"]\s*\)/g, function(m, path){
                 // if we have a ! we have a requirejs plugin
                 var items = path.split('!')
-                deps.push(loadJS(buildPath(items[items.length-1], basePath)));
+                var subPath = buildPath(items[items.length-1], basePath)
+                var prom = loadJS(subPath)
+                deps.push(prom)
+                prom.path = subPath
             });
-
+            fileDeps[absPath] = deps
             return Promise.all(deps);
         });
 
         return pendingLoads[absPath];
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    if(extApi){
+        return function boot(mainAbsPath){
+            loadJS(mainAbsPath).then(function() {
+                var require = makeRequire("/");
+                var main = require(mainAbsPath);
+                if(typeof main === 'function'){
+                    new main()
+                }
+            });
+        }
+    }
 })();
