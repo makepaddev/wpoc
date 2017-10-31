@@ -30,12 +30,23 @@ class IDE extends HtmlApp {
         //console.log("OPEN FILE", file)
     }
 
+    onFileChange(path, contents){
+        //update the require module tree
+        require.updateJS(path, contents)
+
+        var dock = this.childWidgetByType('Dock')
+        // ok so. what if we want to hotreload all previews
+        var previews = dock.findWidgetsByUid(/Preview\/.*/)
+        for(var i = 0; i < previews.length; i++){
+            previews[i].hotReload(path, contents)
+        }
+    }
+
     properties() {
         this.dependencies = {
             'Dock': require('./app/HtmlDock').extend({
             }),
             'Preview':require('./app/HtmlPreview').extend({
-
             }),
             'Editor': require('./app/HtmlEditor').extend({
                 CloseButton:{
@@ -53,6 +64,9 @@ class IDE extends HtmlApp {
                 onRebuilt(){
                     this.onCleanChange(!this.dirty)
                 },
+                onFileChange(content){
+                    this.app.onFileChange(this.file, content)
+                },
                 onCleanChange(clean){
                     this.dirty = !clean
                     var tabs = this.parentWidgetByType('Tabs')
@@ -61,6 +75,7 @@ class IDE extends HtmlApp {
                     if(clean && text.charAt(0) === '*') text = text.slice(1)
                     else if(!clean && text.charAt(0) !== '*') text = '*' + text
                     tab.setText(text)
+                    // lets find all running processes with the same name
                 },
                 onSave(text){
                     var req = new XMLHttpRequest()

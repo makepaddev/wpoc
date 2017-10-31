@@ -80,15 +80,26 @@ class HtmlPreview extends require('../src/HtmlWidget') {
         frame.postMessage(msg,"*")
     }
 
+    hotReload(file, contents){
+        this.postMessage({
+            cmd:'hotReload',
+            file:file,
+            contents:contents
+        })
+    }
+
     onBuilt(){
         // load all deps
     }
 
     onRefresh(){
+        console.log('refresh')
         this.rebuild()
     }
 
     build(){
+        var ips = require.getHeaders().match(/external\-ips:\ (.*),?/)
+        var extip = ips && ips[1] || location.host
         return {
             type:'View',
             width:this.width,
@@ -103,7 +114,7 @@ class HtmlPreview extends require('../src/HtmlWidget') {
                     file:this.file,
                     width:'100%',
                     height:'100%',
-                    src:'http://10.0.1.2:2002/app/iframeworker.html',
+                    src:'http://'+extip+'/app/iframeworker.html',
                     type:'Frame'
                 }]}
             ]

@@ -1,2 +1,3 @@
 var mod = require('./appmodule')
-console.log("require based module loaded in iframe worker")
+document.body.innerHTML ='Live from app - '+
+mod

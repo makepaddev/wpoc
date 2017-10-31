@@ -1,1 +1,1 @@
-console.log("MODULE")
+return 'Live from module'

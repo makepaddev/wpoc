@@ -214,8 +214,30 @@ class HtmlDock extends require('../src/HtmlWidget') {
         this.serialize()
     }
 
-    findWidgetByUid(uid){
+    findWidgetsByUid(uid){
         // find the widget by UID
+        var results = []
+         function find(node){
+            if(!node) return null
+            // we only recur on splitters
+            if(node.type === 'Splitter'){
+                var data = node.getSplitted()
+                find(data[0])
+                find(data[1]) 
+            }
+            else if(node.type === 'Tabs'){ // tabs
+                var tabs = node.getTabs()
+                for(var i = 0; i < tabs.length; i++){
+                    var tab = tabs[i]
+                    if(uid instanceof RegExp){
+                        if(tab.uid.match(uid)) results.push(tab)
+                    }  
+                    else if(tab.uid === uid) results.push(tab)
+                }
+            }
+        }
+        find(this.childWidgets()[0])
+        return results
     }
 
     hasUid(uid){

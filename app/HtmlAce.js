@@ -52,6 +52,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
         });*/
 
         editor.on('input', e=>{
+            this.onFileChange(editor.getValue())
             // store it in local storage
             if(editor.getSession().getUndoManager().isClean()){
                 window.localStorage.removeItem(this.file)

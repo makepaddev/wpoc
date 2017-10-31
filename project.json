@@ -8,7 +8,7 @@
 				"open":true,
 				"folder":[
 					{"name":"project", "open":true,"folder":[
-                        {"name":"app.html"},
+                        {"name":"appmodule.js"},
 						{"name":"app.js"}
 					]}
 				]
@@ -27,7 +27,8 @@
                 "activeTab":1,
                 "tabs":[
                     {"type":"Log", "uid":"Editors" ,"title":"Editors"},
-                    {"type":"Editor", "uid":"Edit/project/app.js", "file":"/project/app.js", "title":"app.js"}
+                    {"type":"Editor", "uid":"Edit/project/app.js", "file":"/project/app.js", "title":"app.js"},
+                    {"type":"Editor", "uid":"Edit/project/appmodule.js", "file":"/project/appmodule.js", "title":"appmodule.js"}
                ]
             },
             "pane2":{

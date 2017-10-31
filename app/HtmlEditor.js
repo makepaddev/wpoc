@@ -17,6 +17,9 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 onCleanChange(clean){
                     this.parentWidget.onCleanChange(clean)
                 },
+                onFileChange(contents){
+                    this.parentWidget.onFileChange(contents)
+                },
                 onSave(text){
                     this.parentWidget.onSave(text)
                 }
@@ -54,6 +57,10 @@ class HtmlEditor extends require('../src/HtmlWidget') {
     }
 
     onCleanChange(clean){
+    }
+
+    onFileChange(contents){
+
     }
 
     onTabFocus(){

@@ -7,7 +7,7 @@ var Url = require('url')
 var Os = require('os')
 var NodeWebSocket = require('./devwebsocket')
 var server_ports = [2002]
-var server_interfaces = ['127.0.0.1','10.0.1.2']
+var server_interfaces = ['0.0.0.0']//127.0.0.1','10.0.1.2']
 
 var mimetable = {
 	'.map':'application/json',
@@ -144,7 +144,7 @@ function requestHandler(req, res){
 		// lets check the etag
 		var etag = stat.mtime.getTime() + '_' + stat.size
 		if(req.headers['if-none-match'] === etag){
-			res.writeHead(304)
+			res.writeHead(304,{'External-IPS':external_ips})
 			res.end()
 			return
 		}
@@ -158,9 +158,11 @@ function requestHandler(req, res){
 			"Cache-control": 'max-age=0',
 			"Content-Type": filemime,
 			'Content-Length':stat.size,
+			'External-IPS':external_ips,
 			"etag": etag,
 			"mtime": stat.mtime.getTime()
 		})
+
 		stream.pipe(res)
 	})
 }
@@ -168,6 +170,8 @@ function requestHandler(req, res){
 if(process.argv.length === 3){
 	var hostModule = require(process.argv[2])
 }
+
+var external_ips = ''
 
 for(var j = 0; j < server_interfaces.length; j++){
 	var server_interface = server_interfaces[j]
@@ -191,6 +195,10 @@ for(var j = 0; j < server_interfaces.length; j++){
 				for(let i = 0; i < iface.length; i++){
 					var subiface = iface[i]
 					if(subiface.family !== 'IPv4') continue
+					if(subiface.address !== '127.0.0.1'){
+						if(external_ips) external_ips += ','
+						external_ips += subiface.address+':'+server_port
+					}
 					if(server_interface === '0.0.0.0' || server_interface == subiface.address){
 						console.log('Server is listening on http://'+subiface.address+':'+server_port+'/')
 					}

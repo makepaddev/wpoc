@@ -7,9 +7,11 @@
     var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     var loadedSources = {}
     var fileDeps = {}
+    var revDeps = {}
     var modulePaths = {}
     var pendingLoads = {}
     var loadedModules = {}
+    var moduleHeaders = {}
     var extApi = api !== undefined
 
     if(!api){
@@ -23,6 +25,7 @@
                     xhr.responseType = 'text'
                     xhr.addEventListener('load', function(){
                         if(xhr.status !==200) return reject(xhr);
+                        moduleHeaders[absPath] = xhr.getAllResponseHeaders() 
                         resolve(xhr.response)
                     })
                     xhr.open('GET', location.origin + absPath)
@@ -49,7 +52,7 @@
                 (function(loaderDiv) {
                     loadJS(mainAbsPath).then(function() {
                         setTimeout(function() { // For debugging.
-                            var require = makeRequire("/", {"div": loaderDiv});
+                            var require = makeRequire("/", mainAbsPath);
                             var main = require(mainAbsPath);
                             if(typeof main === 'function'){
                                 new main(loaderDiv)
@@ -100,7 +103,7 @@
         }
     }
 
-    function makeRequire(basePath, module) {
+    function makeRequire(basePath, modulePath) {
         function require(path, asynccb) {
             if(Array.isArray(path) && asynccb){
                 var arr = []
@@ -159,9 +162,9 @@
                 document.getElementsByTagName('head')[0].appendChild(script)
                 return
             }
-            m = module || {};
+            m = {};
             m.exports = {};
-            var req = makeRequire(buildBasePath(modulePath))
+            var req = makeRequire(buildBasePath(modulePath), modulePath)
             var def = makeDefine(req, m.exports, m)
             var ret = factory.call(m.exports, req, m.exports, m, def);
             if (ret !== undefined) {
@@ -194,6 +197,15 @@
                     resolve(myDeps)
                 })
             })
+        }
+
+        require.updateJS = function(path, contents){
+            var absPath = buildPath(path, basePath)
+            loadedSources[absPath] = contents
+        }
+
+        require.getHeaders = function(){
+            return moduleHeaders[modulePath]
         }
 
         require.bootLoader = bootLoader
@@ -250,6 +262,10 @@
                 // if we have a ! we have a requirejs plugin
                 var items = path.split('!')
                 var subPath = buildPath(items[items.length-1], basePath)
+                var revDep = revDeps[subPath]
+                if(!revDep) revDep = revDeps[subPath] = []
+                if(revDep.indexOf(absPath) === -1) revDep.push(absPath)
+
                 var prom = loadJS(subPath)
                 deps.push(prom)
                 prom.path = subPath
@@ -262,14 +278,44 @@
     }
 
     if(extApi){
-        return function boot(mainAbsPath){
-            loadJS(mainAbsPath).then(function() {
-                var require = makeRequire("/");
-                var main = require(mainAbsPath);
+        return {
+            boot(mainAbsPath){
+                this.mainAbsPath = mainAbsPath
+                loadJS(mainAbsPath).then(function() {
+                    var require = makeRequire("/", mainAbsPath);
+                    var main = require(mainAbsPath);
+                    if(typeof main === 'function'){
+                        new main()
+                    }
+                });
+            },
+            reload(file, contents){
+                // i need to have a list of all the things
+                // that depend on 'me'
+                loadedSources[file] = contents
+                var walked = {}
+                function clearCache(file){
+                    if(walked[file]) return
+                    // lets clear our module
+                    loadedModules[file] = undefined
+
+                    walked[file] = 1
+                    // lets find all the reverse deps
+                    var deps = revDeps[file]
+                    if(deps){
+                        for(var i = 0; i < deps.length; i++){
+                            clearCache(deps[i])
+                        }
+                    }
+                }
+                clearCache(file)
+
+                var require = makeRequire("/", this.mainAbsPath);
+                var main = require(this.mainAbsPath);
                 if(typeof main === 'function'){
                     new main()
                 }
-            });
+            }
         }
     }
 })();
