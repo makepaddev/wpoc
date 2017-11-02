@@ -44,18 +44,6 @@ class HtmlPreview extends require('../src/HtmlWidget') {
                     paddingRight:'4px',
                     float:'left'
                 }
-            }),
-            TestButton:require('./HtmlButton').extend({
-                icon:'envelope',
-                onClick(){
-                    this.parentWidget.onTest()
-                },
-                Bg:{
-                    marginLeft:'5px',
-                    paddingLeft:'5px',
-                    paddingRight:'4px',
-                    float:'left'
-                }
             })
         }
     }
@@ -107,8 +95,7 @@ class HtmlPreview extends require('../src/HtmlWidget') {
             children:[
                 {type:'PreviewBar', children:[
                     {type:'CloseButton'},
-                    {type:'RefreshButton'},
-                    {type:'TestButton'}
+                    {type:'RefreshButton'}
                 ]},
                 {type:'PreviewContainer',children:[{
                     file:this.file,
