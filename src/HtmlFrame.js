@@ -2,18 +2,21 @@
  * HTML Text view
  */
 
-var msgMap = new WeakMap()
-window.addEventListener('message', msg=>{
-	var frame = msgMap.get(msg.source.window)
-	if(frame) frame.onMessage(msg.data)
+var msgMap = {}
+var msgIds = 0
+window.addEventListener('message', event=>{
+    var msg = event.data
+	var frame = msgMap[msg.id]//(msg.data)
+	if(frame) frame.onMessage(msg)
 })
 
 class HtmlFrame extends require('./HtmlView') {
 
     constructor(parent, props) {
         super(parent, props)
-        this.domNode.src = props.src || this.src
-        msgMap.set(this.domNode.contentWindow, this)
+        var id = msgIds++
+        msgMap[id] = this
+        this.domNode.src = (props.src || this.src)+'?id='+id
     }
 
     onMessage(msg){

@@ -334,6 +334,7 @@ class HtmlApp extends HtmlWidget {
                     nest = nest.nest
                 }
 
+                
                 nest.domNode.parentNode.removeChild(nest.domNode)
 
                 node.view = node.nest = undefined

@@ -21,5 +21,5 @@ window.addEventListener('message', function(event){
 })
 
 document.addEventListener('DOMContentLoaded', function(){
-	window.parent.postMessage({cmd:'booted'},"*")
+	setTimeout(_=>window.parent.postMessage({cmd:'booted', id:parseInt(location.search.match(/\?id\=(\d+)/)[1])},"*"),0)
 })
