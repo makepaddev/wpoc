@@ -6,7 +6,7 @@ class HtmlPreview extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
         super(parent, props);
-        this.jsLoadPromise =  require.loadJS('..'+this.file)
+        this.loadJS()
     }
 
     properties() {
@@ -80,8 +80,13 @@ class HtmlPreview extends require('../src/HtmlWidget') {
         // load all deps
     }
 
+    loadJS(){
+        this.jsLoadPromise =  require.loadJS('..'+this.file)
+    }
+
     onRefresh(){
-        console.log('refresh')
+        this.loadJS()
+
         this.rebuild()
     }
 
