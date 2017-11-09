@@ -95,7 +95,7 @@ class HtmlView extends require('./Base') {
         var node = this.domNode
         while(node){
             var widget = node.$vnode && node.$vnode.widget
-            if(widget.type === type) return widget
+            if(widget && widget.type === type) return widget
             node = node.parentNode
         }
     }

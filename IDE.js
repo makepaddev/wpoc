@@ -16,7 +16,7 @@ class IDE extends HtmlApp {
         })
     }
 
-    onOpenFile(file){
+    onOpenEditor(file){
         var dock = this.childWidgetByType('Dock')
         // lets see if we already have this uid
         if(dock.hasUid('Edit' + file)){
@@ -28,6 +28,20 @@ class IDE extends HtmlApp {
             {type:'Editor', uid:'Edit'+file, file:file, title:file.slice(file.lastIndexOf('/')+1)}
         )
         //console.log("OPEN FILE", file)
+    }
+
+    onOpenPreview(file){
+        var dock = this.childWidgetByType('Dock')
+        // lets see if we already have this uid
+        if(dock.hasUid('Preview' + file)){
+            // make this thing the active tab somehow.
+            return
+        }
+        dock.addTab(
+            "previews",
+            {type:'Preview', uid:'Preview'+file, file:file, title:file.slice(file.lastIndexOf('/')+1)}
+        )
+
     }
 
     onFileChange(path, contents){
@@ -47,6 +61,19 @@ class IDE extends HtmlApp {
             'Dock': require('./app/HtmlDock').extend({
             }),
             'Preview':require('./app/HtmlPreview').extend({
+                CloseButton:{
+                    onClick(){
+                        // TODO unify with closeButton in click
+                        var dock = this.parentWidgetByType('Dock')
+                        var tabs = this.parentWidgetByType('Tabs')
+                        tabs.closeTabByContent(this.parentWidgetByType('Preview'))
+                        var data = dock.serialize()
+                        // what we need to do is remove this tab by UID
+                        // from the data, not use closetab by content
+                        dock.data = data
+                        dock.rebuild()
+                    }
+                }
             }),
             'Editor': require('./app/HtmlEditor').extend({
                 CloseButton:{
@@ -60,6 +87,11 @@ class IDE extends HtmlApp {
                         dock.data = data
                         dock.rebuild()
                     },
+                },
+                PlayButton:{
+                    onClick(){
+                        this.app.onOpenPreview(this.parentWidget.file)
+                    }
                 },
                 onRebuilt(){
                     this.onCleanChange(!this.dirty)
@@ -107,7 +139,7 @@ class IDE extends HtmlApp {
                         str += seg
                     }
                     // ok now we have to open a new editor for file str.
-                    this.app.onOpenFile(str)
+                    this.app.onOpenEditor(str)
                     return true
                 }
             })
