@@ -275,6 +275,29 @@ class HtmlDock extends require('../src/HtmlWidget') {
         this.rebuild()
     }
 
+    closeTabByUID(uid){
+        var data = this.serialize()
+        function walk(node){
+            if(node.type === 'Splitter'){
+                return walk(node.pane1) || walk(node.pane2)
+            }
+            else if(node.type === 'Tabs'){
+                for(var i = 0;i < node.tabs.length; i++){
+                    var tab = node.tabs[i]
+                    if(tab.uid === uid){
+                        node.tabs.splice(i,1)
+                        if(node.activeTab === i) node.activeTab = Math.min(node.tabs.length - 1, node.activeTab)
+                        return true
+                    }
+                }
+            }
+        }
+        if(walk(data)){
+            this.data = data
+            this.rebuild()
+        }
+    }
+
     // serialize the state of the entire dock from DOM
     serialize(tabsOut){
         

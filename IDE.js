@@ -63,15 +63,8 @@ class IDE extends HtmlApp {
             'Preview':require('./app/HtmlPreview').extend({
                 CloseButton:{
                     onClick(){
-                        // TODO unify with closeButton in click
                         var dock = this.parentWidgetByType('Dock')
-                        var tabs = this.parentWidgetByType('Tabs')
-                        tabs.closeTabByContent(this.parentWidgetByType('Preview'))
-                        var data = dock.serialize()
-                        // what we need to do is remove this tab by UID
-                        // from the data, not use closetab by content
-                        dock.data = data
-                        dock.rebuild()
+                        dock.closeTabByUID(this.parentWidget.uid)
                     }
                 }
             }),
@@ -79,13 +72,7 @@ class IDE extends HtmlApp {
                 CloseButton:{
                     onClick(){ 
                         var dock = this.parentWidgetByType('Dock')
-                        var tabs = this.parentWidgetByType('Tabs')
-                        tabs.closeTabByContent(this.parentWidgetByType('Editor'))
-                        var data = dock.serialize()
-                        // what we need to do is remove this tab by UID
-                        // from the data, not use closetab by content
-                        dock.data = data
-                        dock.rebuild()
+                        dock.closeTabByUID(this.parentWidget.uid)
                     },
                 },
                 PlayButton:{
