@@ -90,6 +90,10 @@ class HtmlPreview extends require('../src/HtmlWidget') {
         this.rebuild()
     }
 
+    onResize(){
+        this.childViewByType('PreviewContainer').childViewByType('Frame').onResize()
+    }
+
     build(){
         var ips = require.getHeaders().match(/external\-ips:\ (.*),?/)
         var extip = ips && ips[1] || location.host
@@ -104,6 +108,7 @@ class HtmlPreview extends require('../src/HtmlWidget') {
                 ]},
                 {type:'PreviewContainer',children:[{
                     file:this.file,
+                    outerUid:this.uid,
                     width:'100%',
                     height:'100%',
                     src:'http://'+extip+'/app/iframeworker.html',

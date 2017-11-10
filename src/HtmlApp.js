@@ -23,12 +23,12 @@ class HtmlApp extends HtmlWidget {
         function pollResize(){
             for(var i = 0; i < resizes.length; i++){
                 var n = resizes[i]
-                if(n.offsetWidth !== n.lastWidth || 
-                    n.offsetHeight !== n.lastHeight){
+                if(n.offsetWidth !== n.$lastWidth || 
+                    n.offsetHeight !== n.$lastHeight){
                     n.$vnode.widget.onResize()
                 }
-                n.lastWidth = n.offsetWidth
-                n.lastHeight = n.offsetHeight
+                n.$lastWidth = n.offsetWidth
+                n.$lastHeight = n.offsetHeight
             }
         }
         this.pollResize = pollResize
@@ -375,6 +375,8 @@ class HtmlApp extends HtmlWidget {
         }
         else{
             style.display = disp
+            this.pollResize()
+            //!TODO very strange, need to investigate why it needs polling twice
             this.pollResize()
         }
     }

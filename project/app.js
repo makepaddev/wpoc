@@ -7,10 +7,9 @@ var w = c.width = 300
 var h = c.height = 300
 cvs.style.width = w+'px'
 cvs.style.height = h+'px'
-var tweak = 1
 for(var x = 0; x < w; x++){
     for(var y = 0; y < h; y++){
-        var r = x*1
+        var r = x*2
         var g = y*1
         var b = Math.abs(x+y)
         c.fillStyle = 'rgb('+r+','+g+','+b+')'
