@@ -34,10 +34,10 @@ class HtmlPreview extends require('../src/HtmlWidget') {
                     float:'right'
                 }
             }),
-            RefreshButton:require('./HtmlButton').extend({
+            ReloadButton:require('./HtmlButton').extend({
                 icon:'refresh',
                 onClick(){
-                    this.parentWidget.onRefresh()
+                    this.parentWidget.onReload()
                 },
                 Bg:{
                     paddingLeft:'5px',
@@ -84,10 +84,9 @@ class HtmlPreview extends require('../src/HtmlWidget') {
         this.jsLoadPromise =  require.loadJS('..'+this.file)
     }
 
-    onRefresh(){
+    onReload(){
         this.loadJS()
-
-        this.rebuild()
+        this.childViewByType('PreviewContainer').childViewByType('Frame').onReload()
     }
 
     onResize(){
@@ -104,7 +103,7 @@ class HtmlPreview extends require('../src/HtmlWidget') {
             children:[
                 {type:'PreviewBar', children:[
                     {type:'CloseButton'},
-                    {type:'RefreshButton'}
+                    {type:'ReloadButton'}
                 ]},
                 {type:'PreviewContainer',children:[{
                     file:this.file,

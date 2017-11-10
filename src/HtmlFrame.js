@@ -15,16 +15,29 @@ class HtmlFrame extends require('./HtmlView') {
 
     constructor(parent, props) {
         super(parent, props)
-        var id = msgIds++
-        msgMap[id] = this
+        var iframeId = msgIds++
+        this.iframeId = iframeId
+        msgMap[iframeId] = this
+        this.srcUrl = (props.src || this.src)+'?id='+iframeId
+        this.onReload(true)
         //this.domNode.src = 
         // lets append a global iframe
+        
+    }
+
+    onReload(first){
+        if(this.iframe){
+            this.iframe.parentNode.removeChild(this.iframe)
+            this.iframe = undefined
+
+        }
         var iframe = this.iframe = document.createElement('iframe')
-        this.src = iframe.src = (props.src || this.src)+'?id='+id
+        iframe.src = this.srcUrl
         document.body.appendChild(iframe)
-        iframeIds[id] = iframe
+        iframeIds[this.iframeId] = iframe
         var style = iframe.style
         style.border = '0px'
+        if(!first) this.onResize()
     }
 
     onMessage(msg){
