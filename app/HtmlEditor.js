@@ -2,6 +2,8 @@
  * HTML Editor wrapping Ace and a button bar
  */
 
+var jsParser = require('../acorn/js')
+
 class HtmlEditor extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
@@ -19,6 +21,8 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 },
                 onFileChange(contents){
                     this.parentWidget.onFileChange(contents)
+
+                    jsParser.parse(contents, {allowReturnOutsideFunction:true})
                 },
                 onSave(text){
                     this.parentWidget.onSave(text)

@@ -20,16 +20,11 @@ class HtmlFrame extends require('./HtmlView') {
         msgMap[iframeId] = this
         this.srcUrl = (props.src || this.src)+'?id='+iframeId
         this.onReload(true)
-        //this.domNode.src = 
-        // lets append a global iframe
-        
     }
 
     onReload(first){
         if(this.iframe){
             this.iframe.parentNode.removeChild(this.iframe)
-            this.iframe = undefined
-
         }
         var iframe = this.iframe = document.createElement('iframe')
         iframe.src = this.srcUrl
