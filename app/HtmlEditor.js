@@ -3,7 +3,7 @@
  */
 
 var jsParser = require('../acorn/js')
-
+var jsFormatter = require('../acorn/format')
 class HtmlEditor extends require('../src/HtmlWidget') {
 
     constructor(parent, props) {
@@ -22,7 +22,10 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 onFileChange(contents){
                     this.parentWidget.onFileChange(contents)
 
-                    jsParser.parse(contents, {allowReturnOutsideFunction:true})
+                    var ast = jsParser.parse(contents, {allowReturnOutsideFunction:true})
+                    var fmt =  new jsFormatter()
+                    fmt.format(ast)
+                    console.log(ast)
                 },
                 onSave(text){
                     this.parentWidget.onSave(text)
