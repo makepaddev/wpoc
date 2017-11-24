@@ -21,11 +21,6 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 },
                 onFileChange(contents){
                     this.parentWidget.onFileChange(contents)
-
-                    var ast = jsParser.parse(contents, {allowReturnOutsideFunction:true})
-                    var fmt =  new jsFormatter()
-                    fmt.format(ast)
-                    console.log(ast)
                 },
                 onSave(text){
                     this.parentWidget.onSave(text)
@@ -43,6 +38,16 @@ class HtmlEditor extends require('../src/HtmlWidget') {
                 type:'View',
                 height:'calc(100% - 2em)',
             },
+            FormatButton:require('./HtmlButton').extend({
+                icon:'align-left',
+                Bg:{
+                    marginLeft:'5px',
+                    float:'left'
+                },
+                onClick(){
+                    this.parentWidget.onFormatText()
+                }
+            }),
             CloseButton:require('./HtmlButton').extend({
                 icon:'close',
                 Bg:{
@@ -63,6 +68,18 @@ class HtmlEditor extends require('../src/HtmlWidget') {
         }
     }
 
+    onFormatText(){
+        var ace = this.childViewByType('EditContainer').childWidgetByType('Ace')
+
+        var contents = ace.getValue()
+        var ast = jsParser.parse(contents, {storeComments:[],allowReturnOutsideFunction:true})
+        var fmt =  new jsFormatter()
+        fmt.format(ast)
+
+        ace.setValue(fmt.text)
+    }
+
+
     onCleanChange(clean){
     }
 
@@ -82,7 +99,8 @@ class HtmlEditor extends require('../src/HtmlWidget') {
             children:[
                 {type:'EditBar', children:[
                     {type:'CloseButton'},
-                    {type:'PlayButton'}
+                    {type:'PlayButton'},
+                    {type:'FormatButton'}                    
                 ]},
                 {type:'EditContainer',children:[{
                     file:this.file,

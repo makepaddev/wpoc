@@ -19,6 +19,7 @@ class HtmlAce extends require('../src/HtmlWidget') {
         var editor = this.editor = ace.edit(this.view.domNode)
         editor.setTheme("ace/theme/twilight")
         editor.session.setMode("ace/mode/javascript")
+        editor.session.$worker.call("changeOptions", [{asi: true}]) 
         editor.$blockScrolling = Infinity
 
         var commands = editor.commands;
@@ -95,6 +96,15 @@ class HtmlAce extends require('../src/HtmlWidget') {
 
     onTabFocus(){
         this.editor.focus()
+    }
+
+    getValue(){
+        return this.editor.getValue()
+    }
+
+    setValue(value){
+        this.editor.setValue(value)
+        this.editor.selection.setRange({start:{row:0,col:0},end:{row:0,col:0}})
     }
 
     properties() {

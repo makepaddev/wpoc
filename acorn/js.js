@@ -18,6 +18,10 @@
 //
 // [dammit]: acorn_loose.js
 // [walk]: util/walk.js
+
+// This version of acorn is slightly modified (adds support for comments) 
+// and de-ES6 modulised (based on MIT code from github.com/makepad)
+
 /*
 List of Acorn contributors. Updated before every release.
 
